@@ -1,0 +1,206 @@
+<!DOCTYPE html>  <!-- 标记文档类型的声明 -->
+<head>
+    整个页面的属性，比如标题
+    指导浏览器解析的标签，比如编码
+    引入外部文件的标签，引入css或者javascript让他们产生关系
+
+    <meta charset="utf-8"> 
+    <!-- meta 也是head中重要的一个属性，其中可以包含各种页面信息，如编码集
+    中文网页要使用utf8 否则会乱码，有个浏览器则使用gbk，则需要更改成对应的-->
+    <title>rookie-html</title>
+
+</head>
+<!-- head可以理解为包含了页面的信息或者属性，是不作为展示信息的 必须包含一个title，且只能有一个title即显示在浏览器标签页上的标题 
+    但是因为html并不是语法严格的，所以有语法错误浏览器也会去做对应的解析-->
+
+<body>
+<h1>需要展示的信息 这是一个标题</h1> <!-- 不要将标题仅仅理解为加粗加大的文字，它其实隐示的定义了此文档的结构，且搜索引擎也是根据标题优先进行查找 标题是从1-6 重要程度顺序降低-->
+<p>
+    这是一个段落
+
+    我叫<font color="blue" size="15">汤姆</font>
+
+</p>
+<br />
+<hr /> <!-- 水平线-->
+
+<!--
+    理解html的元素，元素是由开始标签，内容，结束标签组成 内容可以为空 这种是双标签元素
+    空元素没有内容，在开始标签中使用 / 关闭 虽然可以不写还是建议规范 如<br />
+-->
+
+<!--
+    理解html元素的属性，以键值对形式出现在开始标签中 属性值始终使用双引号进行包裹 也可以使用单引号，但如果属性值本身包含了双引号作为属性的
+    一部分则必须使用单引号 且属性与属性值均对大小写不敏感 但是推荐使用小写
+    常用的一些属性：id 元素的唯一标识 
+    title 元素的附加信息 可在开发工具中看到
+    style 元素的样式 class 为元素定义一个或多个类名 类名从外部样式文件引入或者在html的 <style>标签中定义 
+-->
+<p id="singleclassp" class="single">这是一个单类名的段落</p>
+<br />
+<p id="multiclassp" class = "one two tree">这是一个多类名的段落</p>
+<b>加粗用b</b>
+<i>斜体用i                             空格</i> <br />
+ 源码中的空格换行不会影响显示的效果，对于 HTML，无法通过在 HTML 代码中添加额外的空间或换行来改变输出的效果。所有连续的空余都会被算成一个空格
+ 
+ <p>文本格式化 首先理解块级元素和行内元素，和单标签双标签是没有关系的 
+    <br />
+    行内元素只能包含行内元素或者文本，块级元素可以包含块级元素和行内元素
+    <br />
+    行内元素会水平方向排列，宽度与内容有关，都是同一行；块级元素各占一行，垂直排列，新的块级元素会换行进行排列
+    <br />
+    行内元素设置宽高间距等属性是无效的
+    <pre>pre标签是块级元素 但却只能包含行内元素与内容   其会保留空格，换行符或者特殊字符 &gt; &quot; 常常用来表示源代码 与code标签配合效果更好
+        换行可以吗
+        <code>println("test")</code>
+    </pre>
+    <address>
+        中国<br />
+        河南<br />
+        郑   &ensp;&ensp;&ensp;州 <pre> 因为是块级元素所以就换行了      </pre><a href="http://www.baidu.com"> john doe</a>
+    </address>
+    <abbr title="world wide web 缩进">www</abbr> <br />
+    <acronym title="ie5 对arconym有效">i </acronym><br />
+    我是<del>汤姆 删除</del><ins>杰瑞 插入</ins>：<q>quote我爱吃奶酪</q> <br />
+    <bdo dir="ltr">从左到右1 </bdo> <bdo dir="rtl"> 从右到左1</bdo>  <bdo dir="ltr">从左到右2 </bdo> <bdo dir="rtl"> 从右到左2</bdo> <br />
+    <!-- 个人理解 这里有点绕，假设第一个是ltr，第二个是rtl,那么在渲染rtl时，rtl在ltr的后面，但是此时是从右向左的顺序，左边代表后面，就把rtl渲染到了ltr的“前面了
+        这么解释还是有些牵强，因为再往后的rtl并没有放在最“前面”而只是放在了它前一个元素的前面-->
+    <bdo dir="rtl">从右到左1</bdo>  <bdo dir="rtl">从右到左2</bdo> <bdo dir="rtl">从右到左3</bdo> <br />
+    <bdo dir="rtl">从右到左</bdo> <bdo dir="ltr">从左到右</bdo>
+    <big>大号字体 </big><small>小号字体 </small><em>着重语气 </em><strong>加重语气 </strong> <sub>下标字 </sub><sup>上标字 </sup> <br />
+    这是一个长引用<blockquote cite="www.baidu.com">长引用会自动换行，并且浏览器会对其进行缩进的处理！cite并不代表是点击的链接，只是一个属性</blockquote> <br />
+    <dfn title="这是全部内容">这容</dfn>第一种dfn的用法<br />
+    <dfn><abbr title="这是全部内容">这容</abbr></dfn> 第二种dfn的用法<br />
+    <dfn>这容</dfn> 这是全部内容 第三种dfn的用法 感觉设计的很奇怪，与abbr雷同 <br />
+    我喜欢看<cite>葫芦娃</cite> <br />
+    <!--[if IE 8]>
+    <br />条件注释
+    <![endif]-->
+
+    <p>
+        <big>本段落着重记录样式相关知识</big> <br />
+        样式在插入时有三种方法 <br />1，外部样式表 通过在head中使用link元素定义资源 
+        <pre><code> &lt;head&gt;<mark>&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;mystyle.css&quot;&gt;</mark> &lt;/head&gt;
+        </code></pre>
+        2,内部样式表 也是在head中，但是是直接用style元素进行定义编写
+        <pre class="htmlHigh">
+            &lt;head&gt;
+            
+            <mark>&lt;style type=&quot;text/css&quot;&gt;
+            body {background-color: red}
+            p {margin-left: 20px}
+            &lt;/style&gt;</mark>
+            &lt;/head&gt;
+            </pre>
+        3，内联样式 如果某个元素有自己的style，通过该元素的style属性赋值
+        <pre class="htmlHigh">
+            &lt;p <mark>style=&quot;color: red; margin-left: 20px&quot;</mark>&gt;
+            This is a paragraph
+            &lt;/p&gt;
+            </pre>
+    </p>
+    <a href="https://www.baidu.com" target="_blank" name="hyperlink"> baidu超链接 注意target四个属性，top self parent在大部分情况下是相同的行为 </a>
+    并且可以通过name或者id给 a 标签命名形成一个锚点，使得超链接可以进行文件内外的锚点跳转
+    <br/>
+
+    <a href="#hyperlink" target="_blank">跳转至hyperlink </a> mailto作为href可以发邮件 
+    <p>
+    图片的使用注意事项 基本使用很简单 <img src="eg_planets.jpg" alt="占位图">
+    背景图使用backgroud属性设置，body table td有这个属性
+    图像的对齐方式使用align属性 默认为bottom（对齐这里应该有很多技巧，比如多个图片怎么去排版，目前还不考虑这些问题）
+    图像大小使用width height属性设置
+    图片作为超链接则是和a配合使用，a的内容使用img即可
+    图像使用map例子如下<br />
+    <img src="eg_planets.jpg" alt="占位图"  border="0" usemap="#planets" >
+    <map name="planets" id ="planets">
+        <area shape="rect" coords="0,0,50,50" href="http://www.baidu.com" target="_blank" alt="baidu"/>
+        <area shape="circle" coords="100,100,20" href="http://www.qq.com"/>
+    </map>
+    要将图片映射成坐标的话则如下
+    <a href="http://www.baidu.com">
+    <img src="eg_planets.jpg" alt="占位图"  ismap >似乎没用
+    </a>
+    </p>
+    <p>
+        表格的使用
+        <table border="1" cellspacing="5" cellpadding="5" frame="vsides">
+            <caption>表格标题</caption>
+            <th>表头1</th><th>表头2</th><th>表头3</th>
+            <tr>
+                <td bgcolor="green" align="right">123</td><td>123</td><td>123</td>
+            </tr>
+            <tr>
+                <td>1234</td><td>1234</td><td> </td>
+            </tr>
+        </table>
+    </p>
+    <p>
+        列表分为无序列表 有序列表 定义列表 最外层使用 ul ol dl 改变type属性可以改变列表的样式如字母，数字，罗马字。内部使用li dt+dd
+    </p>
+    <p> 
+        块的定义与使用 <br />
+        div 与 span 分别用来组合块级元素和内联（行内）元素，使得html内部形成结构化的块，以便每个块可以应用相应的样式。
+    </p>
+    <p>
+        类与id与style
+        先写一个style内部定义的例子
+        <textarea>
+            <head>
+                <style>
+                    body {background-color: blue;}
+                    p {padding: auto;}
+                </style>
+            </head>
+            此时我们是直接定义了整个页面的style，下面我们将style定义为一个"class"
+        </textarea> <br />
+        <textarea>
+            <head>
+                <style>
+                    .mystyle{
+                        background-color: aqua;
+                        padding: 20px;
+                    }
+                </style>
+            </head>
+        </textarea>
+        这样子html内的元素（应该是块级）如div,p等就可以直接将自己的class设置为mystyle以应用这个样式 而内联元素的样式则需要这样定义<br />
+        <textarea>
+            <head>
+                <style>
+                    span.spstyle{
+                        color: red;
+                    }
+                </style>
+            </head>
+        </textarea>
+        关于两类class是否只能应用到div与span上还不是很清楚 需要验证一下 <br />
+        经过测试发现span.style只能赋值给span标签才生效，无论是内联还是块级元素都不会生效；
+        块级 内联 div标签都可以直接使用.style类型的class <br />
+        id与class类似，不过id是唯一的，只能有一个元素指定某个id的style id是大小写敏感的 且在定义时要使用#关键字。利用这一特性可以很方便的做页面内的跳转（参考href）
+    </p>
+    <p>
+        iframe主要用于在网页内显示网页
+        <iframe src="teststyle.html" width="500" height="500" frameborder="1" name="yourtarget"></iframe>
+        配合a中的target可以实现在iframe中跳转到对应的href 只需要引用iframe的name即可
+    </p>
+    <p>
+        html的布局1，使用div配合id与style进行布局 2，html5引入了新的语义header nav section article等标签，可以直接使用，但是仍然需要定义对应的css 3，table的布局
+        使用table的css，在定义时要使用table.xxx的方式，且th td也可以定义 table.xxx th,td{}
+    </p>
+    <p>javascript介绍 <br />
+        <b id="boldjsdemo"></b>
+        <script>
+            document.getElementById("boldjsdemo").innerHTML="javascript bold !"
+        </script>
+        <noscript>抱歉，您的浏览器不支持 JavaScript！</noscript>
+        <!--script标签也可以使用src指定文件 需要注意申明script后标签里的内容会自动执行 不能将其理解为一个函数
+        script不仅能够更改元素的内容，也能更改属性如src title以及样式style.color 不过这里的样式具体到某个元素 就是内联样式了
+        如果浏览器不支持或者被禁用，noscript标签就会起作用-->
+    </p>
+    绝对路径：一个完整的url 从协议开始 如http C <br />
+    相对路劲：/a/b 当前环境的根目录 a/b 当前目录下的a
+    <p> head元素 rel 属性规定当前文档与被链接文档之间的关系。stylesheet属性值表示文档的外部样式表。
+
+        type 属性规定被链接文档的 MIME 类型。</p>
+</body>
+
