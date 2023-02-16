@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> 第二天的笔记</title>
+</head>
+
+<body>
+<h1>一些英语单词</h1>
+<abbr title="乐观的，想当然的">blithely </abbr>
+<abbr title="访问 巡游 回路">circuit </abbr>
+<abbr title="不受惩罚">impunity </abbr>
+<abbr title="局限在">confine </abbr>
+<abbr title="顺序的 接下来">subsequent </abbr>
+
+<h2>html知识</h2>
+<p>语义的介绍 语义元素和非语义元素 
+    语义元素可以让开发者知道元素内是什么 如 form table img等
+    非语义元素如span div
+    html5新定义了一批语义元素 上一章提过 article section header nav footer等 一般配合样式来使用 使得浏览器更好的识别这些元素，因为是统一的规范
+    不推荐省略 html这个标签 
+</p>
+<p>字符实体 html保留了一部分特殊符号如&lt;等; 如需显示请使用&amp;加上对应的码来表示。同时&amp;是使用&amp;amp来表示的    
+    html中的空格使用不间断空格&amp;nbsp;且浏览器会截断连续的空格为一个，如需增加空格数量就必须使用实体空格编码
+    <strong>实体名称对大小写是敏感的</strong> <br />
+    emoji也需要使用utf-8编码，表达方式和字符实体一致。并且也受到样式的影响 如size等
+    html4默认字符集是ISO-8859,也支持utf-8,可以通过更改CSS中的@charset来改变对应样式中使用的字符集
+</p>
+
+<p>
+    frame标签的使用
+    和iframe类似
+    具体例字在同级目录下。注意使用锚点的跳转
+    有frameset的页面不能有body，但是使用noframeset时要配合body
+</p>
+<p>
+    URL编码
+    URL只能使用ASCII编码的字符发送 字符集之外的使用%加两个16进制数字表示 URL中不包含空格 空格一般用+代替
+
+    DOCTYPE并不是html的标签，它只告诉浏览器当前文档是什么类型 即什么版本编写。如html5 xhtml html4....
+
+    xhtml是用xml编写的html，因为其语法很严格，避免了出现语法不规范的问题。强制doctype html header title body namespace等，并且用户可以自己编写或引入DTD  Schema作为文档内部约束
+    xmlns(namespace)也是必须的 
+    https://www.cnblogs.com/JasperZhao/p/15064989.html xml的约束介绍，可以看一下
+</p>
+
+
+</body>
+</html>
