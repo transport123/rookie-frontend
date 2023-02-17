@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+title
+</title>
+</head>
+<body>
+    <h1>英语单词</h1>
+    <p>
+        intersperse 散布，散列 occasional 偶然的 alternate 轮流，替换；可替换的，可选的；替代品，候补者 alternative 可供选择的，另外的；也可以作为名词 resurrect 复活
+        dimly 朦胧 暗淡
+    </p>
+
+    <h2>html的表单</h2>
+    <p> form 表单用来收集用户的输入，其可以包含表单元素如input button等 <br />
+        首先理解表单自身的所有属性，下面写一个表单的例子
+        <form action="test-form-action.php" autocomplete="on"  target="_blank" method="get" id="formid1">
+            <!-- novalidate 不对表单的输入做类型检查，比如mail型的input即使输入格式不正确也不会提示
+            autocomplete相当于一个自动填充，其自动填充的依据是根据input的name上次提交的value进行填充
+            要注意name是可以相同的，提交时是会出现多个同name的键值对，所以要尽量避免name相同的写法，因为它不会给你带来任何便利
+            action即要提交到的服务器上的文件-->
+            <fieldset>
+                <legend> 表单的“标题”</legend>
+                <label name="title-label">为input显示标题</label>
+                <input type="number" id="text-one" value="第一个输入框" name="title-label" size="40" max="100" /> <br />
+                <input type="text" id="text-two" value="第二个输入框" name="title-label-two" maxlength="20"/> <br />
+
+                <input type="submit" id="submit-input" value="提交"/> <br />
+
+                <input type="radio" name="gender" value="male" size="40"/> male <br />
+                <input type="radio" name="gender" value="female"/> female <br />
+                <hr />
+            </fieldset>
+        </form>
+        表单提交时只会提交有name属性的input元素，当使用GET方式提交时直接拼接在URL后侧使用name=value的形式，当使用POST方法时则是放在http协议的内容
+        中，外部不可见。<br />  
+        <del>如果直接设置类型为text的input的name属性，会在输入框上方直接显示name；假设有对应name的label标签，就以这个label的内容作为显示；label可以自由排版。
+        因为name属性在提交时是必须的，我们在开发时又不能使用中文去命名name，所以就使用这种对应的关系，既满足提交，又能显示并非name的内容。</del> 
+        这里理解有误，input本身显示的内容只是自己的type型，像提示文本这些需要自己在外部填写。所以label的name对应可能只是开发中的一种绑定，实际不起作用<br />
+        radio的单选是靠name来约束的，同一name的radio型input只能选中一个，提交时就提交这个选定值。<br />
+        fieldset可以在form内部组合各种input成一个块，并在外部包裹一个边框。<br />
+        <select name ="foods">
+            <option value="apple">apple1</option>
+            <option value="orange">orange</option>
+            <option value="banana" selected>banana</option>
+        </select>
+        <textarea name="paragraph" rows="5" cols="30">default text</textarea>
+        <button type="button" onclick="alert('clicked')">buttonname</button>
+        <input list="colorlist"/>
+        <datalist id="colorlist">
+            <option value="red">
+            <option value="blue" selected>
+            <option value="yellow">
+            <!-- 使用datalist时注意要用其id，且option直接使用value,不填写其中的内容。行为上是一个有多个提示选项的input-->
+        </datalist> <br />
+        form标签外的input可以通过 form属性赋值 form元素的id进行绑定
+        <input type="text" name="outscope" form="formid1"/> <br />
+        通过设置formaction使得提交目标不同，此属性一般应用在submit型的input上
+        formenctype则表示提交表单时使用的编码方式，会覆盖form设置的属性，仅对post类型有效，也是一般应用于submit
+        formmethod表示提交是使用那种类型，也会覆盖。
+        <input type="submit"  form="formid1" value="测试formaction" formaction="test-form-action-2.php" formenctype="text/plain" formmethod="post"
+        formtarget="_self"/> <br />
+        <input type="checkbox" name ="sports" value="football" form="formid1"/>足球
+        <input type="checkbox" name ="sports" value="basketball" form="formid1"/>篮球
+        <input type="checkbox" name ="sports" value="golf" form="formid1"/>高尔夫 <br />
+        <!-- 注意不要给submit类型的name赋值，否则会将submit本身也提交上去-->
+        html5新增了很多新的input类型，如颜色 日期 电话 邮箱 范围等，不需要死记硬背。需要注意input中各种属性限制，max min step pattern等 <br />
+        input还可以设置type为image，其行为和submit一致。且如果给其设置name，提交的内容则是点击的xy的相对坐标
+        <input type="image" src="eg_submit.jpg" form="formid1" height="40" width="40" name = "imgsubmit"  formmethod="get"/> <br />
+        multiple属性多用于file，mail 接受input输入1个以上的字段
+        <input type="file" name="filepicker" form="formid1" height="40" width="40" multiple/> <br />
+        选择文件只是选择了文件名，没有真实的提交文件 Pattern用于正则表达式检查，比较有用 在提交时检测生效，提示语通过title设置 <br />
+        <input type="text" name="patterntest" form="formid1" title="输入格式错误" pattern="abc"/> <br />
+        placeholder表示占位符 required表示提交之前该input必须有输入内容 <br />
+        <em>以上为表单的内容，较为繁杂，而且w3并未将所有属性和类型拿出来讲解，也确实太多没必要，以后用到多多查阅。</em>
+    </p>
+    <h2 dir="rtl">下面是html5的内容</h2>
+    <p>
+        html5删除了frame frameset;html5属性赋值可以使用单引号 双引号 不用引号 或者使用disabled将其置为空 <br />
+        由于html5引入了很多新的语义如header footer等，对于样式的指定和之前会有一些不同 这里要重点关注一下
+        <ol>
+            <li>
+                html5支持自定义添加新元素，通过js createElement后 并在style元素中定义它的样式就可以直接使用这个元素作为标签。且可以控制其是否为block元素
+            </li>
+            <li>
+                由于较老的浏览器不支持添加新元素，且可能无法识别html5中引入的新语义元素，需要引入 shiv 方案进行兼容 <br />
+                并且我们可以通过在css中定义这些语义的display属性为block使得老浏览器可以将其识别为一种style
+            </li>
+            <li>
+                这里要回顾一下style的定义方式 对于已经存在的语义，可以直接使用语义名更改它的样式，body,header这种都是； <br />
+                而如果将其命名为新语义时，html5可以通过创建新语义使得这个过程和上述一致;html4只能通过.或者#的方式将它创建为id或者是class; <br />
+                且在.和#之前我们可以加上一层约束,如div#newid 使得这个样式只能被赋给对应的元素. html的元素id尽管理论上不可以重复,实际上大部分<br />
+                浏览器都对其做了兼容,不过我们还是要避免这种行为.对应的例子如下
+            </li>
+        </ol>
+        <a href="html4style.html" target="_blank"> html4style </a>
+        <a href="html5style.html" target="_blank"> html5style </a> 
+        <!-- article section div的语义定义很相似，令人感到困惑，没有去追究这些概念-->
+    </p>
+    <h3>html5中的canvas与svg</h3>
+    <P>
+        onmousemove=foo(env) 鼠标移动时触发函数传入env获取此时的坐标;onmouseout鼠标移出时触发的事件 <br />
+        <canvas id="mycanvas" width="200" height="200">
+            Your browser does not support the canvas element.
+        </canvas> <br />
+        <script>
+            var cvs=document.getElementById("mycanvas");
+            var ctx =cvs.getContext("2d");
+            ctx.moveTo(10,10);
+            ctx.lineTo(50,50);
+            ctx.lineTo(100,200);
+            ctx.stroke(); 
+        </script>
+        canvas和svg暂时只做基本了解,后面如果要自己绘图再细学. canvas是一个元素的单独绘图,绘制完成后对于浏览器而言就不可感知了;<br />
+        svg每个图像都是一个单独元素,浏览器总是可以感知到它和它的属性,且因为svg是使用xml的描述语言,放大并不会损失质量,且可以被索引/搜索 <br />
+        <a href="https://www.runoob.com/w3cnote/html5-canvas-intro.html" target="_blank"> canvas具体教程</a> <br />
+        <a href="https://www.w3school.com.cn/svg/index.asp" target="_blank"> svg具体教程</a>
+    </p>
+    <h4>html5的多媒体与历史上的解决方案</h4>
+    <p>
+        这部分其实讲的非常模糊粗略，因为播放音视频是一件非常困难的事情。<br />
+        在插件较为流行的年代，解决方案是使用 object 和 embed 标签对媒体文件包裹,如果没有对应的插件会去对应的地址去下载。
+        object所有浏览器都可以识别,embed是新的标准,下面是两个例子。但是现在这两种方案都几乎不再使用。<br />
+        <object data="movie.ogv" type=""></object>
+        <embed src="movie.ogv" pluginspage="www.baidu.com">
+        如上所示,其实这两个元素包裹的内容并不是插件而是具体的媒体文件,甚至可以是html,也就是将一个html嵌套进来。<br />
+        当浏览器无法处理这种类型的文件时,会处理失败并试图去下载对应的插件.
+    </p>
+    https://www.one-tab.com/page/2tYWKGgAQUu3ekKG3v_0cA
+</body>
+</html>
