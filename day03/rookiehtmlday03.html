@@ -120,14 +120,35 @@ title
     </p>
     <h4>html5的多媒体与历史上的解决方案</h4>
     <p>
-        这部分其实讲的非常模糊粗略，因为播放音视频是一件非常困难的事情。<br />
+        这部分其实讲的非常模糊粗略，因为播放音视频在历史上是一件非常困难的事情。<br />
         在插件较为流行的年代，解决方案是使用 object 和 embed 标签对媒体文件包裹,如果没有对应的插件会去对应的地址去下载。
         object所有浏览器都可以识别,embed是新的标准,下面是两个例子。但是现在这两种方案都几乎不再使用。<br />
-        <object data="movie.ogv" type=""></object>
-        <embed src="movie.ogv" pluginspage="www.baidu.com">
-        如上所示,其实这两个元素包裹的内容并不是插件而是具体的媒体文件,甚至可以是html,也就是将一个html嵌套进来。<br />
-        当浏览器无法处理这种类型的文件时,会处理失败并试图去下载对应的插件.
+        <object data="movie.ogv" type="application/x-shockwave-flash"  pluginspage="http://www.macromedia.com/go/getflashplayer">
+            "你没有相关的播放插件"
+        </object>
+        <embed src="movie.ogv" pluginspage="www.baidu.com" />
+        如上所示,其实这两个元素包裹的内容并不是插件而是具体的媒体文件,甚至可以是html,也就是嵌套进的任意内容。<br />
+        当浏览器无法处理这种类型的文件时,会处理失败并试图去下载对应的插件.<br />
+        由于插件的不便性（经常需要更新，插件的html在编写时难以读懂）与不安全性（需要相信第三方）以及html技术的发展，插件的使用已经越来越少了，下面看看html5引入的
+        audio与video标签<br />
+        尽管html5有了原生的音视频标签，实际开发中的使用依然存在许多问题，下面是一些较为简单且性价比不错的方案 <br />
+        <audio controls="controls">
+            <source src="song.mp3" type="audio/mpeg" />
+            <source src="song.ogv" type="audio/ogg"/>
+        <embed src="song.ogv"/> 
+        </audio> <br />
+        <!-- audio元素会先尝试使用MP3和ogg来播放音频，如果失败就退回embed元素
+        局限性： 1，audio标签是html5的，需要使用!doctype html 帮助验证为html5
+                2，虽然audio标签在所有浏览器中都是合法的，但不一定所有浏览器都支持它
+                3, 需要提前将媒体文件转为多种格式保证播放成功率
+                4，退回embed标签后就变成了传统插件式，如果浏览器不支持该类型文件且没有安装插件，依然无法播放。
+                5，embed元素无法回退显示错误信息-->
+        另一种解决思路是直接将媒体文件申明为超链接，例如：<a href="song.ogv" target="_blank">点击播放音乐</a> <br />
+        <a href="test-plugin.doc" target="_blank">点击预览文档</a>
+        浏览器会尝试使用辅助应用程序（插件）来打开此文件，如果没有该类型插件就会下载。<br />
+        在这种方案下我们还可以借助第三方的Js来辅助我们打开此文件（比如运行一段雅虎的音乐播放的js)<br />
+        video的播放思路其实基本一致。只不过我们可以将video上传到一些视频网站后，利用iframe，embed标签直接嵌入目标视频网站的html地址在该页面播放
     </p>
-    https://www.one-tab.com/page/2tYWKGgAQUu3ekKG3v_0cA
+    <a href="https://zhuanlan.zhihu.com/p/360688957" target="_blank">关于插件，音视频的一篇扩展文章</a>
 </body>
 </html>
