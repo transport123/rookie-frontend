@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+link-list-table
+</title>
+<style>
+a:link{color:black;text-decoration: none;}
+a:visited{color:red;text-decoration: overline;}
+a:hover{color:aqua;}
+a:active{color: orange;}
+
+ a.multimulti:link {color:blue;}
+a.multimulti :visited {color:yellow;}
+ a.multimulti:hover {color:green;}
+ a.multimulti:active {color:gray;}
+
+</style>
+</head>
+
+<body>
+<a href="https://www.baidu.com">访问百度</a> <br />
+active必须在hover后，hover必须在link与visited后。<br />
+如何在同一页面利用伪类申明多个样式？上面的multifake是一个例子。<br />
+<a href="https://www.google.com" class="multimulti">将伪类包裹成了一个类？</a> <br />
+
+
+</body>
+</html>

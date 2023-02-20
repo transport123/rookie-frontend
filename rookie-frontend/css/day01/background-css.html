@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+background-css
+</title>
+<style>
+    .ibgcolor{background-color: #526f87;}
+    .ibgimg{background-image: url("gradient2.png"); background-repeat: repeat-x;} 
+    .ibgimgpos{background-image: url("img_tree.png");background-repeat: no-repeat; background-position: right top;}
+    .ibgimgposnorule{background: #526f87 url("img_tree.png") no-repeat  fixed right top ;}
+    .ibgimgfixed{background: red url(smiley.gif) no-repeat ;}
+</style>
+</head>
+<body class="ibgimgposnorule">
+    <!--head里似乎不能写注释 background-repeat代表图片重复的方向，x水平，y垂直，默认是水平垂直都平铺
+    background-position可以控制背景的位置，也可以设置具体值。background也可以使用更简洁的写法，不知道是否规范。
+    从左往右的顺序是color,image,repeat,attachment,position。要注意color和image是可以同时存在的，repeat position属性只对image生效
+    一旦设置了color，整个背景就是这个颜色了
+    attachment属性似乎只能设置在能滚动的背景上，比如body本身内容很多时可以滚动，设置了就有效；设置到下面的div中直接就看不见了，因为这些div本身是不滚动的
+    这些需要以后多写例字去验证-->
+
+    <div class="ibgcolor" style="width:300px;height:300px;"></div>
+    <div class="ibgimg" style="width:300px;height:300px;"></div>
+    <div class="ibgimgfixed" style="width:300px;height:300px;"></div>
+    <p>
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+        attachment fixed的bgimage不会随着页面一起滚动！<br />
+
+    </p>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+text-css
+</title>
+<style>
+    h1{color: red;text-align: justify;}
+    h2{text-align: center;}
+    h3{text-align: right;}
+    .decoration{text-decoration: overline;}
+    p.uppercase{text-transform: capitalize;}
+    .textindent{text-indent:30px;}
+    .letterspace{letter-spacing: -2px;}
+    .wordspace{word-spacing: 10px;}
+    .lineheight{line-height: 150%;}
+    .rtldir{direction: rtl;}
+    .whitespace{white-space: nowrap;}
+    .textshadow{text-shadow: 2px 2px red;}  
+    .imgaligntop{vertical-align: text-top;}
+    .imgalignbottom{vertical-align: text-bottom;}
+    .allfontattr{font-family: serif,Times,"Times New Roman";font-style: italic;font-size: 2em;}
+    .fixedfontsize{font-size: 30px;}
+</style>
+</head>
+<body>
+    <h1>红色标题 color表示内容填充所选择的颜色，和background-color有本质区别；对于W3C标准的CSS：如果你定义了颜色属性，你还必须定义背景色属性。</h1>
+    <!-- justify 表示每一行被展开为宽度相等，左右外边距对齐。但是最后一行是不能保证的  text-justify 可以被单独赋值为
+    none auto(自动选择合适的对齐方案) inter-word(通过在单词之间增加空间保证对齐) inter-character(通过在字母之间增加空间保证对齐)
+    https://www.cnblogs.com/zjjDaily/p/9525350.html 讲了justify实际中的一些应用和坑-->
+    <h2>居中对齐的文字</h2>
+    <h3>靠右对齐的文字</h3>
+    <div class="decoration"> 文字装饰线，可设置为上中下三种 overline line-through underline</div>
+    <p class="uppercase">uppercase!使用transform来定义文字的大小写</p>
+    <p class="textindent"> 定义文字首行的缩进 </p>
+    <p class="letterspace">定义字符间的间距</p>
+    <p class="wordspace">定义单词之间的间距，one two three seems only affect some languages 是不是呢</p>
+    <p class="lineheight">定义行与行的间距<br />
+        定义行与行的间距<br />
+        定义行与行的间距<br />
+        定义行与行的间距<br /></p>
+    <p class="rtldir">1定义文本方向2。很有趣的现象，是通过标点符号截断为一句话，并不像dir那样整体每个字符都从右向左，而是把每句话的标点从右向左。</p>
+    <p class="whitespace">要注意       编辑的文字空白始终是无效的，这个属性影响的是超过浏览器一行时的行为，它是否会换行。这里会换行吗这里会换行吗这里会换行吗这里会换行吗这里会换行吗这里会换行吗这里会换行吗这里会换行吗这里会换行吗这里会换行吗。</p>
+    <p class="textshadow">测试文字阴影 两个px分别表示背景阴影文字的偏离量</p>
+    <img src="img_tree.png" /> 默认对齐的文字 <br />
+    <img src="img_tree.png" class="imgaligntop"/> aligntop对齐的文字 <br />
+    <img src="img_tree.png" class="imgalignbottom"/> alignbottom对齐的文字 <br />
+
+    <!--字体系列的赋值可以有多个，浏览器会顺序查找直到找到一个可用的字体。注意这里赋值时需要使用逗号隔开，且大于一个单词的字体名称要使用双引号包裹
+        em=px/16 fontsize设置em时可通过浏览器字号大小设置改变字体显示大小。为了兼容不同浏览器还需要用到font-size = 100% 目的就是设置一个default的大小-->
+    
+    <div style="font-size: 200%;">
+        <p class="allfontattr">How this text gonna show?</p>
+        <p class="fixedfontsize">How this text gonna show?</p>
+    </div>
+
+</body>
+</html>

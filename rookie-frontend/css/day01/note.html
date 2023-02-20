@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+note01
+</title>
+</head>
+<body>
+    <h1>样式的权重以及选择优先级</h1>
+    <p>
+        已知的三种插入样式表的方法 1，外部样式表；2，内部样式表；3，内联样式表。默认的使用优先级：内联>内部>外部>浏览器默认行为 <br />
+        如果外部样式表的引入在内部样式表的后面，则它会覆盖内部样式表。<br />
+        css的基础语法为 param {attr1:value;attr2:value;} param我们称之为选择器，{}内部的键值对我们称之为声明 <br />
+        当多个样式表同时存在且都定义了同一个选择器时，首先会使用两个样式表的属性并集，同时存在的属性则按照上述的优先级进行覆盖<br />
+        <b>上面解释的是一个元素引用了一个选择器，但是该选择器有多个同名申明的情况，下面解释一个元素引用多个选择器的情况</b> <br />
+        首先选择器有这几种类型，它们的优先级如下：<br />
+        内联样式>id选择器>类选择器(class)=属性选择器(直接使用元素属性)=伪类(用来定义元素的特殊状态如a:link{color:red;})>元素选择器>通用选择器 <br />
+        权值相等时，后出现的会覆盖先出现的
+    </p>
+    <a href="background-css.html">背景样式练习</a>
+    <a href="text-css.html">文字样式练习</a>
+    <a href="link-list-table-css.html">链接列表表格练习</a>
+</body>
+</html>
