@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" languages="EN">
+<head>
+<meta charset="utf-8">
+<title>
+allbox style
+</title>
+<style>
+    .borderstyle{border-style: dashed;border-width: 2px;border-color: green; border-radius: 5px;}
+    .fourborderstyle{border-style: dotted dashed solid groove;}
+    .singleborderstyle{border-style: solid;border-color: black; border-bottom-style: dotted;border-bottom-color: red;}
+    .abbrstyle,.ovalstyle{border:1px solid red}
+    .ovalstyle{height: 300px;width: 300px;
+        border-radius: 40px 30px 20px 10px / 10px 20px 30px 40px;}
+</style>
+</head>
+<body>
+<h1 class="borderstyle">border内容展示</h1>
+<p class="fourborderstyle">同时设置四个borderstyle 顺序 上右下左;设置三个 上 右左 下;设置两个 上下 右左</p>
+<p class="singleborderstyle"> 单独改变一条边的border</p>
+<p class="abbrstyle">简易类型声明 似乎不能声明多条边的style</p>
+<p class="ovalstyle">圆角申明,理解椭圆的方式. 当使用一个值时就是通过画圆将相交的部分替换为圆弧,圆心有四个,分别是半径距离左上,右上,右下,左下边的位置.<br />
+理解了这个椭圆就好理解了,因为椭圆有两个半径,第一个值是水平半径,第二个为垂直半径.其简易声明方式也是从左上往右的循环. </p>
+outline仅仅是在border外再画一层“边框”,它的属性和border几乎一样,但是它不占据真实的空间,只显示.<br />
+
+<h2>再复习一下分组选择器与嵌套选择器</h2>
+<pre>
+    嵌套选择器
+    它可能适用于选择器内部的选择器的样式。
+    
+    在下面的例子设置了四个样式：
+
+    p{ }: 为所有 p 元素指定一个样式。
+    .marked{ }: 为所有 class="marked" 的元素指定一个样式。
+    .marked p{ }: 为所有 class="marked" 元素内的 p 元素指定一个样式。
+    p.marked{ }: 为所有 class="marked" 的 p 元素指定一个样式。
+
+    分组选择器
+    就是使用,分组
+    h1,p{ }
+</pre>
+<h3>元素的属性并不是属性选择器,属性本身的优先级似乎非常低,因为通过标签选择器设置的style都可以覆盖通过属性的直接赋值。选择器的权重算法可以多看看</h3>
+<img src = "css_weight.png"/>
+<h4>内联元素与块级元素</h4>
+<p>display可以改变元素的显示类型,块元素占用全部宽度强制换行,起始各一个;内联元素不强制换行,只占用需要的宽度. <br />
+不要把这里的换行搞错了,它值得是这个元素本身是否会换行,而不是它的内容排列方式！即使是a的文字内容,太长了也当然是会换行的.<br/>
+关于文字换行则是另外一个问题了,即white-space属性</p>
+<h5>max-height与max-width的坑</h5>
+<p>max-width虽然可以限制内容的最大宽度,但是当宽度小于max-width时,其宽度也不会缩小,仍然是max-width;<br/>
+    min-width的行为也很怪异,设置之后实际宽度直接为100%,令人困惑.<br/>
+    max-height设置后实际高度不可超出,但是文本显示可以超出,估计和后续的overhidden属性有关
+</p>
+
+<b style="font-size: 2em;">元素位置的总结,较重要</b>
+<ol style="list-style-type: decimal;">
+    <li>首先要理解一个概念,html的元素分为遵循文档流的元素和不遵循文档流的元素。遵循文档流的元素代表它本来的位置,占据空间,且它自身不会与其他元素主动重合 <br/>
+        不遵循文档流的元素不占据空间,会与其他元素重合。不占据空间的意思就是元素本该出现在文档流的那一块区域是空白的,不会影响文档流中其他元素的排版</li>
+    <li>static遵循文档流,忽略top等属性</li>
+    <li>fixed不遵循文档流,表示与浏览器窗口的定位,是固定位置,即使发生滚动它也不变</li>
+    <li>relative遵循文档流,但是可以通过top等属性使其偏移,原来的位置还会留下并占据空间</li>
+    <li>absolute不遵循文档流,如果其父元素也有定位属性,则根据其父元素进行定位,否则就相对于html标签.这里有些复杂要详细解释<br />
+    这里有一个原则：top是元素的margin edge 离它父亲元素top edge的偏移量,也就是说是不计算父元素的padding,但是要计算自身的margin</li>
+    <li>因为relative是自身定位结束后进行偏移,所以父元素的padding是计算的;而absolute是通过margin的edge直接用position值和父元素的border进行计算,所以不计算父元素的padding</li>
+    <li>sticky</li>
+    <li>z-index</li>
+</ol>
+
+
+<div style="border: 1px solid black; width: 500px;height: 300px; position: relative;margin-top: 50px; top: 50px; padding-top: 66px;">
+    <div style="border: 1px solid red; width: 200px;height: 200px;position: absolute;margin-top: 25px;top : 0px"></div>
+    <div style="border: 1px solid green; width: 200px;height: 200px;position: relative;margin-top: 25px;top : 0px"></div>
+
+</div>
+
+<p>矩形剪裁</p>
+</body>
+
+</html>
