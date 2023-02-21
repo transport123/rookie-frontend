@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+cssday2
+</title>
+
+<style>
+div.fontstyle1{color: red;font-size: large;font-style:italic;font-weight: 200;}
+.tablestyle1{color: green;border: 1px solid blue;background-color: black;}
+
+.customtableelement,.customtableelement th,.customtableelement td{
+    border:2px solid grey;background-color: blueviolet;
+}
+.customtableelement td{
+    border: none;
+}
+.customtableelement .customth{
+    border:2px solid grey;background-color: khaki;
+}
+
+</style>
+
+</head>
+<body>
+    <h1>首先归纳总结下选择器的几个坑</h1>
+        <ol style="list-style-type: decimal;">
+            <li>先理解在定义一个类/id选择器时, #和.到底代表什么--直接以#/.classname的形式定义时,表示整个html的元素都可以使用该选择器;<br />
+                而如果是div#/.classname表示只有div设置该选择器会生效,下面有验证的例字证实了这一点,所以目前先这么理解</li>
+                
+            <li>其次需要明白虽然父元素设置了style会影响到子元素的表现形式,但是这种情况下子元素本身还是没有设置style的！下面有一个table的例子 <br />
+            可以看到尽管table设置了border,td和th最终都是没有border的 说明只有填充内容会被父元素的style影响,而元素本身的属性不会 <br />
+            这一点也不是100%确定,暂时这么理解.</li>
+
+            <li>关于伪类即a:link的选择器,可以使用a.classname:link a.classname:visited来将一个超链接的样式用一个classname表示 <br/>
+            伪类表示一个元素不同状态时的样式,上述的写法表示定义了一个a独有的classname,且classname对link与visited状态都做了样式定义<br/></li>
+
+            <li>关于选择器定义时的 空格,这是最令人费解的一点. 因为将选择器定义时的空格和逗号弄混了,逗号代表同时定义这些选择器,而空格表示父子关系,<br />
+                即后面的元素只有在父元素中时这个样式才生效.还是用一个table的例子来展示. customtableelement本质上仍然是一个类选择器,空格后其实也是一个选择器<br />
+                它可以是任意一种选择器 类/id/元素标签,此时定义的样式真正生效的对象是它 即最后一个空格后的选择器,但是加上了一个重要的约束:<br/>
+                <b>该选择器的元素 必须是它父选择器的子元素时才会生效！</b>这种写法应该经常应用于类似于li td这种子元素较多的元素,比如我们有两个table,<br />
+                我们分别定义了style1 与 style2 因为有两种样式所以不能直接对table,th,td进行样式定义.我们只需要分别定义 .style1 th{} .style2 th{} <br />
+                就可以在对table设置对应的style后直接生效,而不需要为每一个th都设置样式了 
+            </li>
+
+        </ol>
+
+        <!--第一个例子-->
+        <div class="fontstyle1">
+            <p >
+            设置div生效
+            </p>
+        </div>
+
+        <div>
+            <p class="fontstyle1">
+            设置div内的p不生效
+            </p>
+        </div>
+
+        <p class="fontstyle1">
+            设置p不生效
+        </p>
+        <!--table的例子-->
+        <table class="tablestyle1">
+            <tr>
+                <th>fistname</th>
+                <th>lastname</th>
+            </tr>
+            <tr>
+                <td>sam</td>
+                <td>godd</td>
+            </tr>
+            <tr>
+                <td>sam</td>
+                <td>godd</td>
+            </tr>
+        </table>
+
+        <!--选择器空格与逗号的展示-->
+
+        <table class="customtableelement">
+            <tr>
+                <th class="customth">fistname</th>
+                <th>lastname</th>
+            </tr>
+            <tr>
+                <td>sam</td>
+                <td>godd</td>
+            </tr>
+            <tr>
+                <td>sam</td>
+                <td>godd</td>
+            </tr>
+        </table>
+</body>
+</html>

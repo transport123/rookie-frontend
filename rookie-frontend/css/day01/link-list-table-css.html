@@ -16,6 +16,17 @@ a.multimulti :visited {color:yellow;}
  a.multimulti:hover {color:green;}
  a.multimulti:active {color:gray;}
 
+ul.lista{list-style-type: circle;}
+ol.listb{list-style-type: upper-roman;}
+ol.listimg{list-style-image: url(smiley.gif);}
+ul.compitable{list-style-type: none; padding: 0px;margin: 0px;}
+ul.compitable li.compitable{background-image: url("smiley.gif"); background-repeat: no-repeat; font-size: 3em; background-position: 0 0.5em; padding-left: 1em;}
+
+.hasborder{color: red;border: 1px solid black;}
+
+
+.customborder,.customborder th,.customborder td{border:3px solid green}
+
 </style>
 </head>
 
@@ -25,6 +36,97 @@ active必须在hover后，hover必须在link与visited后。<br />
 如何在同一页面利用伪类申明多个样式？上面的multifake是一个例子。<br />
 <a href="https://www.google.com" class="multimulti">将伪类包裹成了一个类？</a> <br />
 
+<b>像a:link的这种使用：的写法被称作伪类，用来定义一些元素类型的某些状态。起初的一些疑问：这种写法是唯一的，我们如何申明两种链接的样式呢 <br/>
+    在网上查到的大部分都是使用.multi a:link,使用发现无效。正确的写法是a.classname:link,本质上就是定义了一个a元素的类选择器，通过：link进行属性（伪类？）访问，并定义它的样式
+</b>
 
+<h1>列表练习</h1>
+
+<ul class="lista">
+    <li>coffee</li>
+    <li>tea</li>
+    <li>juice</li>
+</ul>
+
+<ol class="listb">
+    <li>coffe</li>
+    <li>tea</li>
+    <li>juice</li>
+</ol>
+
+
+<ol class="listimg">
+    <li>coffee</li>
+    <li>tea</li>
+    <li>juice</li>
+</ol>
+
+浏览器兼容方案<br />
+
+<ul class="compitable">
+    <li class="compitable">coffee</li>
+    <li class="compitable">tea</li>
+    <li class="compitable">juice</li>
+</ul>
+ul li .classname这种写法是不行的，且即使可行，li的样式也必须手动去设置，因为ul在设置ul.classname之后，只对ul起作用，因为这个class是ul域后的 <br />
+list-style 可以使用这种简写方法，和background一样。
+
+<h2>表格练习</h2>
+<table class="hasborder">
+    <tr>
+      <th>Firstname</th>
+      <th>Lastname</th>
+    </tr>
+    <tr>
+      <td>Peter</td>
+      <td>Griffin</td>
+    </tr>
+    <tr>
+      <td>Lois</td>
+      <td>Griffin</td>
+    </tr>
+  </table>
+
+  <div style=" width: 400px;height: 400px;background-color: aqua; border:1px solid transparent"  >
+    <div style="width: 50%;height: 200px;background-color: red; margin: 50px;" >
+    </div>
+  </div>
+  <br />
+<!--关于样式覆盖范围的一些思考，如果样式中属性作用的对象内容是一致的话，父元素设置了样式，子元素会默认使用该样式，或者理解为直接使用的就是父样式，比如
+    color表示填充颜色，给table设置也能直接影响到th td中的填充内容，如果单独给th td设置则会覆盖table的样式。但是像boder这个属性，table的border与th td的border
+  并不是同一个东西，这也是为什么我们如果给table th td都设置border后会有双层表格的原因。希望这些能帮助你理解
+  另外我发现因为block元素本身会因为换行存在一定的高度，所以设置的固定height会和实际的显示效果有偏差-->
+
+  <table class="hasborder" style="border-collapse: collapse;">
+    <tr>
+      <th class="hasborder">Firstname</th>
+      <th class="hasborder">Lastname</th>
+    </tr>
+    <tr>
+      <td class="hasborder">Peter</td>
+      <td class="hasborder">Griffin</td>
+    </tr>
+    <tr>
+      <td class="hasborder">Lois</td>
+      <td class="hasborder">Griffin</td>
+    </tr>
+  </table>
+  宽高使用%来设置时表示占据父元素的百分比 
+  text-align表示水平对齐方式，verticle-align表示垂直对齐方式。<br />
+
+  <table class="customborder">
+    <tr>
+      <th>Firstname</th>
+      <th>Lastname</th>
+    </tr>
+    <tr>
+      <td>Peter</td>
+      <td>Griffin</td>
+    </tr>
+    <tr>
+      <td>Lois</td>
+      <td>Griffin</td>
+    </tr>
+  </table>
 </body>
 </html>
