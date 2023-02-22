@@ -67,13 +67,15 @@ outline仅仅是在border外再画一层“边框”,它的属性和border几乎
 </ol>
 
 
-<div style="border: 50px solid black; width: 500px;height: 500px; position: relative;margin-top: 50px; top: 1000px; padding-top: 66px; overflow: visible;" >
+<div style="border: 50px solid black; width: 500px;height: 500px; position: static;margin-top: 50px; top: 1000px; padding-top: 66px; overflow: visible;" >
     <div style="border: 1px solid red; width: 200px;height: 200px;position: absolute;margin-top: 25px;top : 0px"></div>
     <div style="border: 1px solid green; width: 200px;height: 200px;position: relative;margin-top: 25px;top : 0px"></div>
     <div style="border: 1px solid yellow; width: 200px;height: 200px;position: sticky;margin-top: 25px;top :20px;"></div>
     <div style="border: 1px solid blue; width: 200px;height: 2000px;position: static;margin-top: 25px;top : 100px"></div>
     
 </div>
+
+<div style="border: 1px solid black; width: 500px;height: 500px;"></div>
 
 <div style="border: 1px solid black; width: 500px;height: 500px; position: absolute; top: 2500px;left: 800px; padding-top: 20px; overflow: visible;" >
     <div style="border: 1px solid blue; width: 200px;height: 2000px;position: static;margin-top: 25px;top : 100px"></div>

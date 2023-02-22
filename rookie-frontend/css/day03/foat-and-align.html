@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+float and align
+</title>
+<style>
+    .borderstyle{border:1px solid black};
+</style>
+</head>
+<body>
+    <h1>float练习与解释</h1>
+    <p style="width: 60%;height: 100%; border:1px solid black;">float的最初引入是为了解决文字围绕图片的问题 下面是一个例子 <br />
+    <img src="logocss.gif"  style="float:right"/>
+    文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片
+    <br/><br/>
+    <img src="logocss.gif" align="top"/>
+
+    文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片文字会围绕这个图片
+    <br />
+    <br />
+    如上所示,有float属性和无float属性的情况有着比较大的差别. <b>float的本质是包裹与破坏,它会使元素脱离文档流,且元素的行为很像<a href="#inlineblock">inline-block</a> 但又使它的inline-height无效,即后续元素<br/>
+    认为此时inline-height为0,故换行时和默认换行行为一致.但是前面的空间又被占据,直到换行到inline-height大于带有float属性的元素的height时,前面的空间才可用;<br />
+    而inline-block元素比如img,因为其存在inline-height,当后续元素如文字需要换行时,直接以这个height为一行来换行 </b>
+    </p>
+
+    <i id="inlineblock">何为inline-block?首先块级元素的特征:1.块级元素都从新的一行开始且其后的元素也另起一行 2.可以设置它的宽高 3.宽度默认情况为父元素的100% <br />
+    内联元素的特征：1,自身不换行,除非一行的内容排列不下才会换行2,元素的高度 宽度 底部边距等不可设置3,元素的宽度就是它的内容宽度 <br/>
+    inline-block结合了上述两者的特征,宽高可以被设置,和其他元素在同一行,默认情况宽度为内容宽度 <br />
+    inline-height为通过计算其内容高度得到的.上述不带float的img计算出高度inline-height(此行的高度?)后续文字(匿名inline元素)不换行且默认对齐到此行的bottom.</i> <br/>
+    <a href="https://segmentfault.com/a/1190000005905564">关于float内部存在的限制</a>  <br /> 
+    <a href="https://cloud.tencent.com/developer/article/1343572">inline-bloack与float的优劣</a> 换行时,下一个元素的top是根据上一个元素的top决定的,这是为什么本链接中float导致的错乱问题.
+    <br />
+    float的坑确实很多,解决方案上面列举了一部分,原理只能浅尝辄止,后续通过具体学习文档流 DOM树来精炼这部分知识
+    <h2>
+        对齐练习
+    </h2>
+
+    使用magin:auto 来水平居中对齐一个元素 <br/>
+    <br/>
+    <div class="borderstyle" style="width: 50%; height:30px; margin:0 auto">
+        该属性是影响此元素在父元素中的对齐情况,不影响此元素中的子元素和内容,比如这段文字就没有被对齐
+    </div>
+    只对齐文字使用text-align <br />
+    <div class="borderstyle" style="width: 50%; text-align: center;">
+        该属性是影响此元素在父元素中的对齐情况,不影响此元素中的子元素和内容,比如这段文字就没有被对齐
+        该属性是影响此元素在父元素中的对齐情况,不影响此元素中的子元素和内容,比如这段文字就没有被对齐</div>
+
+    图片居中对齐也是使用marign:auto,同时需要将图片改为display:block 这点有些难理解,或许是因为inline默认不换行,导致其不会计算父元素的总宽?这样解释有些牵强,先记住这种用法 <br />
+    <img src="logocss.gif" style="display: block;margin:0 auto"/>
+    使用float元素进行左右对齐,并通过overflow:auto 来修正float导致的父元素高度坍缩问题<br />
+    <div class="borderstyle" style="width: 50%;height:50px">
+        该图像会超出我的高度！
+        <img src="logocss.gif" style="float: right;">
+    </div>
+
+
+ <div class="borderstyle" style="width: 50%;height:50px;overflow: auto;">
+        该图像不会超出我的高度！ auto的定义是当超出时可以用scroll时就使它scroll.如果我们不设置height,auto属性会将它撑开到能容纳子元素显示的边缘位置,否则就另它scroll <br />
+        此处还有一个奇怪的点,由于上面一个img使用了float,使得此div的位置也和往常不一样,它并没有接在上一个div下方而是接在了超出的img下方,或许这和float元素不在正常文档流中有关
+        <img src="logocss.gif" style="float: right;">
+</div>
+
+ 使用line-height来垂直居中<br /> 
+ 过于费解,实在是看不太懂了:<a href="https://zzlbt.github.io/2019/05/06/line-height-%E4%B8%8E-vertial-align-%E5%B1%9E%E7%9B%B8%E8%AF%A6%E8%A7%A3/">关于line-height和各种盒子模型的解释</a><br />
+
+需要着重理解line-height height line-box 换行行为 https://stackoverflow.com/questions/32022042/what-does-mean-line-box-in-css
+https://zhuanlan.zhihu.com/p/360114530 https://segmentfault.com/a/1190000005116275
+
+<br/>
+
+ 使用transform:translate(-50%,-50%)来进行居中,其中50%代表的是元素自身宽高的50%而不是父元素的宽高<br />
+</body>
+</html>
