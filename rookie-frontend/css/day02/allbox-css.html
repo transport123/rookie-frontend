@@ -61,18 +61,42 @@ outline仅仅是在border外再画一层“边框”,它的属性和border几乎
     <li>absolute不遵循文档流,如果其父元素也有定位属性,则根据其父元素进行定位,否则就相对于html标签.这里有些复杂要详细解释<br />
     这里有一个原则：top是元素的margin edge 离它父亲元素top edge的偏移量,也就是说是不计算父元素的padding,但是要计算自身的margin</li>
     <li>因为relative是自身定位结束后进行偏移,所以父元素的padding是计算的;而absolute是通过margin的edge直接用position值和父元素的border进行计算,所以不计算父元素的padding</li>
-    <li>sticky</li>
-    <li>z-index</li>
+    <li>sticky 是relative与fixed 行为的组合;其初始定位完全通过relative定位,且遵循文档流;当通过滚动条使得其距离屏幕的边界等于设置的值时,它的行为和fixed一致,且不会因此改变本来的<br />
+    文档流位置,同时该行为受父元素border+padding的影响,在fixed状态下滚动时不会超过父亲的border+padding展示,这条约束的优先级>定位距离的优先级</li>
+    <li>z-index 因为元素可以重叠显示,设置z-index的值表示元素显示时的z轴</li>
 </ol>
 
 
-<div style="border: 1px solid black; width: 500px;height: 300px; position: relative;margin-top: 50px; top: 50px; padding-top: 66px;">
+<div style="border: 50px solid black; width: 500px;height: 500px; position: relative;margin-top: 50px; top: 1000px; padding-top: 66px; overflow: visible;" >
     <div style="border: 1px solid red; width: 200px;height: 200px;position: absolute;margin-top: 25px;top : 0px"></div>
+    <div style="border: 1px solid green; width: 200px;height: 200px;position: relative;margin-top: 25px;top : 0px"></div>
+    <div style="border: 1px solid yellow; width: 200px;height: 200px;position: sticky;margin-top: 25px;top :20px;"></div>
+    <div style="border: 1px solid blue; width: 200px;height: 2000px;position: static;margin-top: 25px;top : 100px"></div>
+    
+</div>
+
+<div style="border: 1px solid black; width: 500px;height: 500px; position: absolute; top: 2500px;left: 800px; padding-top: 20px; overflow: visible;" >
+    <div style="border: 1px solid blue; width: 200px;height: 2000px;position: static;margin-top: 25px;top : 100px"></div>
+
     <div style="border: 1px solid green; width: 200px;height: 200px;position: relative;margin-top: 25px;top : 0px"></div>
 
 </div>
 
-<p>矩形剪裁</p>
+<p>矩形剪裁 通过clip rect等shape来剪裁此元素,四个值分别对应距离x=value与y=value的直线,顺序依旧是上右下左</p>
+
+<p>
+    <b>overflow</b> <br/>
+    overflow定义了元素超出元素框时的行为,visible hidden scroll inherit 都很好理解<br />
+    但是由于元素显示可以超出元素框这个特性显得非常杂乱,且如何定义 元素框 这个东西也令我觉得很模糊,下面记录一些自己的理解 <br/>
+    <del>html元素在遵循文档流的情况下会使用宽高位置排列元素;可以这么理解,首先html会将</del><br/>
+    如果即考虑文档流(实际的border),又考虑显示内容是很难对这个东西做出具体的归纳的,按照以下步骤来做应该会轻松一些<br/>
+    <ol>
+        <li>如果元素有position属性,我们就按照每个position的规则先对其进行定位.</li>
+        <li>如果它不遵循文档流,那么就很简单,直接通过父元素或浏览器来定位,要注意absolute是通过父元素的 定位 来确定自己的定位,是最终的位置而不是文档位置！</li>
+        <li>如果它遵循文档流且它的父元素不遵循文档流,则它会根据父元素的最终位置来定位,尽管此时的父元素不遵循文档流也就是不"实际占用位置",但是这个行为是影响与父元素同级的元素的,子元素不受影响 <br/>
+        子元素只感知父元素的位置,宽高,从而进行自己的定位与显示.所以父元素是否遵循文档流根本不重要,子元素唯一关注的就是父元素的最终位置与宽高,其内部的同级子元素在定位时才会关心彼此的文档流</li>
+    </ol>
+</p>
 </body>
 
 </html>
