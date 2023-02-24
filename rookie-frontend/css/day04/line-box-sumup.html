@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" languages="zh">
+<head>
+<meta charset="utf-8">
+
+<title >
+盒子高度的一些总结
+</title>
+
+<style>
+.aligndiv{height:200px;
+    line-height:200px; border: 1px solid black;
+    text-align: center;}
+
+.alignspan{display: inline-block;
+    border: 1px solid red;line-height: 1.5;
+    vertical-align: middle;}
+
+.aligndivnoblock{
+    line-height:200px; border: 1px solid black;
+    text-align: center;}
+
+.alignspannoblock{
+    border: 1px solid red;line-height: 1.5;
+    vertical-align: middle;}
+
+
+</style>
+
+</head>
+
+
+<body>
+    <i>这个问题是在看文字垂直对齐的一个方案的时候引出来的,下面先把这个例子复现</i>
+
+
+    <div class="aligndiv">
+        <span class="alignspan">
+            我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗
+            我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗
+        </span>
+    </div>
+
+    <div class="aligndivnoblock" >
+        <span class="alignspannoblock">
+            我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗
+            我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗
+        </span>
+    </div>
+    <div style="line-height: 200px;border: 1px solid black;">我会对齐吗</div>
+    
+    <div style="line-height: 10px;border: 1px solid black;">
+        <span style=" border: 1px solid red;line-height: 40px;">我会对齐吗</span> 
+        <span style=" border: 1px solid red;">我会对齐吗   我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐  我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐</span> 
+        <span style=" border: 1px solid red; ">我会对齐吗 </span>
+    </div>
+
+    <div style="border: 1px solid black;">
+        <span style=" border: 1px solid red;line-height: 40px;">我会对齐吗</span> 
+        <span style=" border: 1px solid red;">我会对齐吗   我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐  我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐吗我会对齐</span> 
+        <span style=" border: 1px solid red; ">我会对齐吗 </span>
+    </div>
+  
+   
+    <b>在例子复现过程中遇到了非常诡异的问题,如果申明为xhtml这个写法就完全不起作用了  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" 被迫将其删掉</b>
+    <h1>line box and inline box <a href="https://hacks.mozilla.org/2015/03/understanding-inline-box-model/" target="_blank"> 一篇比较简单的解释</a></h1>
+    <p>
+        line box 是一个虚拟的box,直白的解释就是html中的一行,其包裹多个inline box;而多个line box就组成了block box(如p div)的垂直容器.<br />
+        当同一行的inline box数量过多使得其总长超出一个line box时,就会分出另一个或多个line box来装多出的inline box;<br />
+        如果单个inline box的长度超出了剩余的line box的宽度,那么该inline box就会被 split 成两个或多个 box来放入后面的line box.<br/>
+        <b>特别注意这里的split并不是真正的拆分,比如一个span标签并不会变成两个span标签,只是它的内容被拆开,放入下一个line box,且换行排版等行为会收到这个line box属性的影响.<br/>
+            一些标签本身的属性行为也会有些反常,你只需要把它先理解成一行,将属性应用之后在拆分放入多个line box中即可.如span的水平padding,它只会影响到所有文字的首尾padding,中间部分不受影响,因为它本来是只有一行的,水平padding能控制的当然只有首尾了</b>
+        <br/>
+        <br/>
+        <br/>
+        <i>写到这里有一些感悟,inline box的定义本来是只在一行的元素,那么它的内容换行机制就是通过line box 和外部的block box一起协作实现的</i> <br />
+        line-height属性非常的重要,当它的值已经确定时(通过计算inline boxs的最大line height并与显式的设置值进行比较)它直接决定了line box的高度,假设容器内部只有一行那这就是整个容器的高度<br/>
+        所以上面的一个例子中,当我们的文字只有一行时,垂直对齐只需要设置一个line height就行了  下面稍微解释下为什么<br/>
+        首先在一个line box中,每个inline box可以通过设置vertical-align来在一行内进行垂直对齐,对齐即是根据line height来进行.此时我们设置line height为200,只有一行,那么这个div<br/>
+        的高度就是200,又因为vertical-align的关系为middle,内容即在一行中的水平中线对齐,呈现出的效果就是垂直对齐了.<br/>
+        <b>line height update:网上看到的计算方法都是取line box中的最大高度与显示设置的line height中的较大者为准,但是经过写例子我发现了两种不同的行为</b>
+        <ol>
+            <li>
+                当外界容器不显示设置line height时,行为与上述描述一致,且需要注意单个inline box的line height在设置后也是影响整行的
+            </li>
+            <li>
+                当外界容显示设置line height时,会直接忽略inline box的计算line height,只取容器line height与inline box的显式line height的最大值 案例均在上方
+            </li>
+        </ol>
+        <b>不能将line box的高度和line box中元素的高度混为一谈</b>
+       
+    </p>
+    <h2>最后我们解释为什么通过inline block 可以使得多行文字垂直居中</h2>
+    <p>首先我们看假设不申明inline block的时候会出现什么情况,即虽然换行了,但是我的每一行都非常的高,也就是200px,这是因为我们在外部设置了容器的line height <br/>
+    所以当span要换行到一个新的line box时,它遵循了这个行高的规范,在y=200px的地方开始了新的一个行高也为200px的line box.这里就比较好理解文章所说的幽灵节点了 <br/>
+    因为虽然span被split了但是仍然只有一个标签,所以在新的一行中有一个隐形的节点,它的高度便继承了我们容器的line height,也就使得新的一行也是200px高了<br/><br/>
+    由于并不清除inline block的底层原理,这里只能记录一下我自己的理解。<b>inline block使得该元素同时拥有内联和块级元素的特性,也就是它虽然只是一行,但它可以在自身内部换行<br/><br>
+    还记得上面所解释的span元素分行原理吗,span标签本身还是一行的,只是它的内容被拆到了容器中的下一个line box中,而inline block不会被拆到它父容器的下一行line box,它自身就可以生产出line box<br/>
+    我们通过设置该inline block元素的line height来覆盖外界容器的line height,因为它有block的特性,所以要注意此时的line height属性的影响者不再是我们外部父容器的line box高度,而是它<br/>
+    自身内部line box的高度,所以我们设置为1em来保证该元素最终的真实高度由它自身的line height决定（要注意元素自身的高度并不受line height的影响,是元素的最终高度会参与到line height的计算中)<br/>
+    同时由于它还存在inline的特性也就是一行,所以通过align middle可以在其父容器的一个line box中垂直对齐,综合起来就能够整体的对齐了。
+    </p>
+</body>
+
+
+</html>
