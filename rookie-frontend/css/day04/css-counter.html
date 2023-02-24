@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html  languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+css计数器
+</title>
+<style>
+    .father{counter-reset: father-counter;}
+    .increase::after,.father::after{content: counter(father-counter);}
+
+    .increase{counter-reset: h-counter;
+        counter-increment: father-counter;}
+    .hcounter{ counter-increment: h-counter}
+    .hcounter::after{content:counter(h-counter)}
+</style>
+</head>
+<body>
+<div class="father"></div>
+<div class="increase">
+    <h1 class="hcounter"></h1>
+    <h2 class="hcounter"></h2>
+</div>
+<div class="increase">
+    <h1 class="hcounter"></h1>
+    <h2 class="hcounter"></h2>
+</div>
+<div class="increase">
+    <h1 class="hcounter"></h1>
+    <h2 class="hcounter"></h2>
+</div>
+
+
+</body>
+</html>

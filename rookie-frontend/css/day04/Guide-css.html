@@ -1,0 +1,88 @@
+<!DOCTYPE html >
+<html languages="zh">
+<head>
+<meta charset="utf-8">
+<title>
+导航小练习
+</title>
+<style>
+body{
+    margin:0;
+}
+.verticalul{
+    list-style-type: none;
+    padding: 0;
+    width: 10%;
+    height: 90%;
+    border: 1px solid purple;
+    position:fixed;
+    top:0px;
+    left: 0px;
+    overflow: auto;
+}
+.verticalul li{background-color: red;border-bottom: 1px solid purple;}
+.verticalul a{display: block;text-decoration: none;padding: 10px 5px;color: black;text-align: center;}
+.verticalul a:hover{background-color: blue;}
+.verticalul a.active{background-color: green;}
+.verticalul a:hover:not(.active){background-color: yellow;}
+.verticalul li:last-child{border-bottom: 0px;}
+
+
+.horiul{
+    list-style-type: none;
+    position:relative;
+    left:15%;
+    top:30px;
+    margin: 0;
+    padding: 0;
+    width: 50%;
+    background-color: gray;
+   
+}
+.horiul li{
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    background-color: blue;
+  
+   
+
+
+   
+}
+
+.horiul a{text-decoration: none;color: black;text-align: center;display: inline-block;
+        padding: 10px 10px;margin: 0;border-right: 1px solid black;}
+
+.horiul a:hover{background-color: aqua;}
+.horiul a.active{background-color: blueviolet;}
+
+</style>
+</head>
+<body>
+    <ul class="verticalul">
+        <li><a href="#test" class="active">主页</a></li>
+        <li><a href="#test">新闻</a></li>
+        <li><a href="#test">练习</a></li>
+        <li><a href="#test">关于</a></li>
+    </ul>
+    <!--通过margin padding设置为0消除ul本身的间隙
+    由于a本身是inline类型，设置宽度对他无效，所以申明为block使得它的可用宽度变长
+    a:not(.active)表示没有设置active的其他a元素会被设置该样式
+    positionfixed可以使body的一级元素使用100%height有效-->
+
+    <ul class="horiul">
+        <li><a href="#test" class="active" >主页</a></li>
+        <li><a href="#test">新闻</a></li>
+        <li><a href="#test">练习</a></li>
+        <li style="float:right"><a href="#test" >关于</a></li>
+    </ul>
+    <!-- 水平样式在实际使用时还是有不少问题的,当使用inline block来使得li横向排列时,默认的会存在一些空白,可以通过1,标签在html文档中只申明一行2,使用负的margin3，将fontzie设为0
+    无论哪种方法都显得有些奇怪。其次不使用float想达到单个元素放置右侧的功能有些困难,目前我没有解决方案。-->
+    <del>且对inline-block类元素应用float会出现问题,暂时不深究了</del><br/>
+    错误的想法,没能实现是因为我float的位置放在了a上,应该放在li上的. float的本质是将元素改为block,它会直接忽视display的属性值
+
+    <!--https://www.vanseodesign.com/blog/demo/inline-block/-->
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html languages="zh">
+<head>
+<meta charset="utf-8">
+<title>
+下拉菜单练习
+</title>
+<style>
+.hide{display: none;}
+.menu{border: 1px solid black; display: inline-block;}
+.dropdown{display: inline-block;}
+.dropdown-content{display: none;}
+.dropdown-content p{background-color: red; text-align: center; margin : 0;}
+.dropdown-content p:hover{background-color: blue; }
+
+div.dropdown:hover .dropdown-content{display: block;}
+span.menu:hover +p.dropdown-content{display: block;}
+
+
+</style>
+</head>
+<body>
+
+    <div class="dropdown">
+        <span class="menu">下拉菜单</span>
+        <div class="dropdown-content"> 
+            <p >选项一 </p>
+            <p >选项二 </p>
+        </div>
+      
+
+    </div>
+
+    <!--absolute定位时如果不设置top等属性会按照文档流的位置摆放它
+    思考误区,hover显示应该是整个div,如果只设置span的hover,鼠标移动到下面就又弹回了 嵌套选择器要灵活运用,父子关系,兄弟关系都是可以用的-->
+</body>
+</html>
