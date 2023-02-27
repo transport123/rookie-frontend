@@ -1,0 +1,29 @@
+<!DOCTYPE html >
+<html languages="zh">
+<head>
+<meta charset="utf-8">
+<title>
+图像拼接
+</title>
+<style>
+span{width: 45px;height: 43px;display: inline-block;}
+.home{background:url(img_navsprites_hover.gif)}
+.back{width :43px;background:url(img_navsprites_hover.gif) -47px 0}
+.forward{width :43px;background:url(img_navsprites_hover.gif) -91px 0}
+.home:hover{background:url(img_navsprites_hover.gif)0 -45px}
+.back:hover{width :43px;background:url(img_navsprites_hover.gif) -47px -45px}
+.forward:hover{width :43px;background:url(img_navsprites_hover.gif) -91px -45px}
+a{height: 44px;width:100%;display: inline-block;}
+</style>
+
+</head>
+
+<body>
+<span class="home"><a href="demo1.jpg"></a></span> <!--注意background设置图片宽高的行为和img不一样,它不会使图片拉伸来适应box的大小,默认就是直接平铺在0 0的位置
+将a设置为block是为了能手动设置它的高度并使得可以点击它的内容，设置inlineblock还是无法点击 可能是inline属性使得内容为空的a依然没有可点击区域（这里无法解释,先记住这种特性）
+最后发现是因为我没设置宽度,inline-block因为内联属性所以此时宽度为0 而block元素默认占据一行-->
+<span class="back"><a href="demo1.jpg"></a></span>
+<span class="forward"><a href="demo1.jpg"></a></span>
+</body>
+
+</html>

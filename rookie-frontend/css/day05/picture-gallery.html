@@ -1,0 +1,51 @@
+<!DOCTYPE html >
+<html languages="zh">
+<head>
+<meta charset="utf-8">
+<title>
+图片廊
+</title>
+<style>
+.wrappic{width: 150px;display: inline-block;border: 1px solid gray;}
+.wrappic:hover{border: 1px solid black;}
+.pic{width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;}
+.desc{text-align: center; padding: 10px 5px;}
+
+@media only screen and  (max-width:700px){
+    .wrappic{
+        width: 48%;
+    }
+}
+</style>
+</head>
+<body>
+    <!--这里提供了一种图片自适应的方法,外层用设置了width的div包裹,不设置高度,内部的图片用auto计算宽高,同时设置max属性来限制其最大值-->
+    <div class="wrappic">
+    <a href="demo1.jpg" target="_blank"><img src="demo1.jpg" alt="图片描述" class="pic"/></a>
+    <div class="desc">
+        文本描述文本描述文本描述
+    </div>
+    </div>
+    <div class="wrappic">
+    <a href="demo2.jpg" target="_blank"><img src="demo2.jpg" alt="图片描述" class="pic"/></a>
+    <div class="desc">
+        文本描述文本描述文本描述
+    </div>
+    </div>
+    <div class="wrappic">
+    <a href="demo2.jpg" target="_blank"><img src="demo3.jpg" alt="图片描述" class="pic"/></a>
+    <div class="desc">
+        文本描述文本描述文本描述
+    </div>
+    </div>
+    <div class="wrappic">
+    <a href="demo2.jpg" target="_blank"><img src="demo4.jpg" alt="图片描述" class="pic"/></a>
+    <div class="desc">
+        文本描述文本描述文本描述
+    </div>
+    </div>
+</body>
+</html>
