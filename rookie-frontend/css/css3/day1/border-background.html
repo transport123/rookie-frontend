@@ -1,0 +1,31 @@
+<!DOCTYPE html >
+<html languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+边框与背景新属性
+</title>
+</head>
+<body>
+    <h1>border</h1>
+    <p>圆角之前已经总结过,阴影也较好理解:x,y的位置以及扩散宽度;border-img主要得理解它的切分机制,在切成九宫格之后四个角的内容不占实际空间（未验证）,中间的内容区域可以进行拉升或者平铺,<br />
+    切分机制就是砍四刀,依旧是上右下左的顺序,参数个数的行为也和之前的一致<br />
+    <a href="https://www.jianshu.com/p/e84366990d49">一篇比较详细的介绍</a></p>
+    <h2>圆角</h2>
+    <p>
+        写例子复习一遍,再总结下评论区的半径加起来超过width会怎么处理
+    </p>
+    <h2>background</h2>
+    <p>
+      1,可以设置多张背景图并分别指定它们的位置以及是否repeat等;2,size指定背景图的大小,行为和img设置宽高一致;3,origin和clip的区别,origin是指定区域之后在这片区域渲染 <br />
+      clip是渲染之后再将这片区域剪裁出来  <br />
+      <a href="https://www.cnblogs.com/shytong/p/5077129.html">关于origin和clip的实例</a>
+    </p>
+    <h2>线性渐变</h2>
+    <p>
+        <a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/repeating-linear-gradient">再看一下 重复性渐变布局</a>
+        感觉mozilla这个文档更加正规一点
+    </p>
+
+</body>
+</html>
