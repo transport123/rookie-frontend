@@ -1,0 +1,36 @@
+<!DOCTYPE html >
+<html  languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+提示工具demo
+</title>
+<style>
+    .dotborder{border-bottom: 1px dotted black;display: inline-block;position: relative;}
+    .hinttext{position: absolute;top: 100%;left:50%;border: 1px solid red;border-radius: 5px; width: 100px;text-align: center;
+    margin-left: -50px;margin-top:5px;visibility: hidden;opacity: 0;transition: opacity 1s;}
+    .dotborder:hover .hinttext{visibility:visible;opacity: 1;}
+    .hinttext::after{content: "";position: absolute;
+    left: 50%;
+    top: -50%;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent  transparent black transparent;}
+</style>
+</head>
+<body>
+    <div class="dotborder">鼠标移动到我这
+        <span class="hinttext">提示文本</span>
+    </div>
+
+    <!--在设置absolute后宽度的计算发生了变化 暂时记住以下的几条原则
+        在没有显式设置width和right时
+        宽度=min(max(首选最小宽度, 可用宽度), 首选宽度)
+        1，首选宽度：按照不自动断行的方式排版，取得的内容宽度（可以理解为不受容器限制自动排列的宽度就是你想要的效果）
+        2，首选最小宽度：calculate the preferred minimum width, e.g.,by trying all possible line breaks（我理解就是在1的情况下你把容器不断缩小到不能换行，一般是单个文字的宽度）
+        3，可用宽度：就是把right设置为0，计算出的width
+        所以span中的文字在没有设置width后会不断的linebreak成一行只有一个字符的形式
+    -->
+</body>
+
+</html>

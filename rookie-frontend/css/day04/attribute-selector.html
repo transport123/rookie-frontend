@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+属性选择器
+</title>
+<style>
+    [title]{color: blue;}
+    [title = "equal"]{color: red;}
+    [title~="equal"]{color:green;}
+    [title*="equalstar"]{color:aqua}
+    [title|="equalbegin"]{color:blueviolet}
+    [title^="equalchar"]{color: darkorange;}
+    [title$="equalend"]{color: gold;}
+</style>
+
+</head>
+
+<body>
+<!--= ~= |= ^= $= *=-->
+<h1 title="first header"> 因为有标题这个属性,所以样式应用成功</h1>
+<p title="equal">该段落的title为equal所以颜色变为红色</p>
+<p title="equal1">该段落的title为equal所以颜色变为红色？</p>
+<p title="equal-equal">该段落的title为equal所以颜色变为红色</p>
+<p title="equal equal">该段落的title为equal所以颜色变为红色</p>
+<!-- = 表示必须完全相同-->
+<h2 title="word equal">包含完整的单词使用~=</h2>
+<h2 title="wordequalstar">只要能拆分出此单词就行 用*=</h2>
+<h2 title="equalbegin-ee">开头是完整且唯一的单词 或者用-隔开</h2>
+<h2 title="equalcharlll">开头只要是这几个字母就行</h2>
+<h2 title="equaleeeeequalend">只要结尾是这几个字符就行</h2>
+</body>
+</html>
