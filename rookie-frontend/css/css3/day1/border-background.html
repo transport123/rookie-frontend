@@ -1,31 +1,125 @@
 <!DOCTYPE html >
-<html languages="zh-CN">
+<html languages="zh">
 <head>
 <meta charset="utf-8">
 <title>
 边框与背景新属性
 </title>
+
+<style>
+    .radiusborder{border-radius: 20px 15px / 5px; border: 1px solid black;}
+    .shadowbox{box-shadow: 20px 20px 10px red;}
+
+    .borderimg{
+        height: 200px;border: 10px solid transparent;
+        padding: 10px 10px;
+        -webkit-border-image:url(border.png) 30 30 round; /* Safari 5 and older */
+	    -o-border-image:url(border.png) 30 30 round; /* Opera */
+	    border-image:url(border.png) 30 30 stretch;
+    }
+
+    .multiback{background-image: url(img_flwr.gif), url(border.png),url(img_flwr.gif);
+                background-position: left top,right bottom,center;
+                background-repeat: no-repeat,no-repeat,no-repeat;
+            background-size: auto,auto,100% 100%;}  
+    .divbox{border: 3px solid black;padding:15px;
+        margin: 15px;}
+    #originback{
+        background-image:linear-gradient(#FEC3B4, #FF8C6F, #FF7A59);
+        background-repeat: no-repeat;
+        background-origin: content-box;
+       }
+    #clipback{
+
+        background-clip: content-box,padding-box;
+        background-image:linear-gradient(#FFFFFF, #F5C26B), linear-gradient(#FEC3B4, #FF8C6F, #FF7A59); 
+
+    }
+    #clipcolor{
+        background-clip: content-box;
+        background-color: red;
+    }
+    #boxshadow{
+        background-clip: content-box;
+        background-color: red;
+        box-shadow: inset 0 0 0 15px blue;
+    }
+
+
+    #singlegradient{
+        background-image:linear-gradient(to left bottom,#FFFFFF, #F5C26B); 
+    }
+
+    #angelgradient{
+        background-image:linear-gradient(20deg,red,yellow,blue); 
+
+    }
+
+    #repeating-gradient{
+        background-image: repeating-linear-gradient(red,yellow 10%,blue 20%);
+    }
+
+    #radialgradient{
+        background-image: radial-gradient(red 5%,yellow 15%,blue 20%);
+    }
+    #radialrepeat{
+        background-image: repeating-radial-gradient(red 10%,yellow 15%,blue 23%);
+    }
+
+</style>
+
 </head>
 <body>
     <h1>border</h1>
-    <p>圆角之前已经总结过,阴影也较好理解:x,y的位置以及扩散宽度;border-img主要得理解它的切分机制,在切成九宫格之后四个角的内容不占实际空间（未验证）,中间的内容区域可以进行拉升或者平铺,<br />
+    <p class="radiusborder shadowbox">圆角之前已经总结过,阴影也较好理解:x,y的位置以及扩散宽度;border-img主要得理解它的切分机制,在切成九宫格之后四个角的内容不占实际空间（未验证）,中间的内容区域可以进行拉升或者平铺,<br />
     切分机制就是砍四刀,依旧是上右下左的顺序,参数个数的行为也和之前的一致<br />
+
+    <div class="borderimg" >
+    </div>
+
     <a href="https://www.jianshu.com/p/e84366990d49">一篇比较详细的介绍</a></p>
     <h2>圆角</h2>
     <p>
-        写例子复习一遍,再总结下评论区的半径加起来超过width会怎么处理
+        写例子复习一遍,再总结下评论区的半径加起来超过width会怎么处理 <br />
+        当盒子中相邻圆角的半径加起来超过盒子的直径时,浏览器会对此重新计算,同时将相邻圆角的 圆进行缩小,直至它们的和等于盒子的直径
     </p>
     <h2>background</h2>
     <p>
       1,可以设置多张背景图并分别指定它们的位置以及是否repeat等;2,size指定背景图的大小,行为和img设置宽高一致;3,origin和clip的区别,origin是指定区域之后在这片区域渲染 <br />
       clip是渲染之后再将这片区域剪裁出来  <br />
+
+       <div title="multiple background" style="height: 300px;" class="multiback"></div> 
+
+       <div title="background origin" style="height: 300px;" class="divbox" id="originback"></div> 
+       <!--background color 不受origin影响 即使设置了origin也会将整个border内的空间用颜色填充 gradient不属于背景色,行为和image是一致的. 想要使用origin属性必须设置为no-repeat,否则
+        会将图像平铺整个box区域-->
+
+       <div title="background clip" style="height: 300px;" class="divbox" id="clipcolor"></div> 
+        <!--clip是会影响到color的 因为它的机制是在渲染完后将 设定的 box区域外的都剪裁掉. 可以巧妙的利用双clip box的设定来达到给padding设置颜色的功能 使用inset 无模糊扩散的box-shadow也能达到该目的-->
+        <div title="background clip" style="height: 300px;" class="divbox" id="boxshadow"></div> 
+        <!--inset 表示shadow在box内部 前两个0为x,y偏移量 第三个0为模糊值的扩散程度 第四个0为shadow本身宽度的扩散值-->>
+
       <a href="https://www.cnblogs.com/shytong/p/5077129.html">关于origin和clip的实例</a>
     </p>
+
     <h2>线性渐变</h2>
     <p>
         <a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/gradient/repeating-linear-gradient">再看一下 重复性渐变布局</a>
-        感觉mozilla这个文档更加正规一点
+        感觉mozilla这个文档更加正规一点<br/>
+    <div class="divbox" style="height: 300px;"id="singlegradient"></div>
+    <div class="divbox" style="height: 300px;"id="angelgradient"></div>
+    <div class="divbox" style="height: 300px;"id="repeating-gradient">
+    这里的百分比指的是在多少长度的地方变为该颜色,所以后面的总要大于前面的,其实就相当于定义了一块背景占了多大的空间,因为它要repeat平铺
+    </div>
+    
+    <div class="divbox" style="height: 300px;"id="radialgradient"></div>
+    <div class="divbox" style="height: 300px;"id="radialrepeat"></div>
+    <a href="https://www.runoob.com/cssref/func-radial-gradient.html" target="_blank">size 属性指的是圆心到边或角的最远或最短距离 后面的百分比定义的是圆心位置 这样就好理解了</a> 
+
+    
     </p>
+
+
 
 </body>
 </html>
