@@ -5,7 +5,100 @@
 <title>
 字体与2d 3d以及动画
 </title>
+
+<style>
+.textshadow{
+    text-shadow: 5px 5px 5px red;
+}
+.boxshadow1{
+    box-shadow: 0px 220px 20px 0px green;
+    height: 200px;
+    border: 1px solid black;
+}
+.cardstyle{
+    margin-top: 240px;
+    max-width: 400px;
+    border: 1px black solid;
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2),0 8px 12px 0 rgba(0, 0, 0, 0.19);
+
+}
+.textoverflowp1{
+    width: 600px;
+    white-space: nowrap;
+    overflow: hidden;
+    border: 1px solid black;
+    margin: 5px;
+}
+
+.textoverflowp2{
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    border: 1px solid black;
+    margin: 5px;
+}
+.keepall{
+    border: 1px solid black;
+    width: 200px;
+    word-break: keep-all;
+}
+.breakall{
+    border: 1px solid black;
+    width: 200px;
+    word-break: break-all;
+}
+.overflowwrap{
+    border: 1px solid black;
+    width: 200px;
+    overflow-wrap:break-word;
+}
+</style>
 </head>
 <body>
+    <h1 class="textshadow">
+        text shadow effect
+        <!--属性值和boxshadow一致,前两个为xy偏移量 第三个为模糊扩散程度 但是它不能像box-shadow一样设置模糊边界宽度-->
+    </h1>
+    <div class="boxshadow1" >
+        如果没有inset属性表示shadow不被限定在box内,第四个参数为0时shadow的整体宽高和box本身一致;第四个参数代表在此基础上分别向每个方向再延申多长。第三个参数是一种模糊程度,它是在 <br/>
+        第四个参数计算过后的宽高基础上再向每个方向延申,只不过这些都会是模糊的 
+        <!--常常使用两个shadow堆叠来营造卡片的样式,用一个更大更模糊的shadow放在一个小且比较清楚的shadow下方,使得立体感更足-->
+    </div>
+    <div class="cardstyle">
+        <img src="rock600x400.jpg" style="width: 100%;height: auto; margin: 0px; "/>
+        <a href="https://www.jianshu.com/p/e7373c2bbef1">解决图片底部空白的问题,本质是因为行内垂直对齐,但是这个为什么会影响到line height不太理解</a>
+        <!--可以思考一下行高的计算：bottom和top决定了一个行高,假设以基线对齐，在通过图片这个元素计算时bottom=基线-基线高度，top=基线+图片高度，总高度为图片高度+基线高度;
+        而以底部对齐时,bottom不变,top=基线-基线高度+图片高度，总高度为图片高度,等于变相的将line-height降低了,所以白边就不见了-->
+    </div>
+    <span>::before和::after本质就是添加一个元素,该元素也会有border(猜测display默认的和添加它的元素保持一致)</span>
+    <h2>文字溢出处理</h2>
+    <p class="textoverflowp1">
+        today is the first day of march good luck my friend!
+        <img src="rock600x400.jpg" style="width: 30%;height: auto; margin: 0px; "/>
+
+        <p>today is the first day of march good luck my friend!</p>
+    </p>
+    <!--一个很有趣的现象,如果在nowrap的情况下在p中再添加一个block元素,该元素最终在浏览器审查元素时会成为它的兄弟元素而不是父子关系,应该是因为不能换行影响的-->
+    <!--white-space属性定义了如何处理空白：空格以及换行符,nowrap将连续的空格合并成一个且换行无效，显示出的行为就是文字不换行。需要注意它并不定义文字本身的换行规则 譬如拆分单词等-->
+
+    <p class="textoverflowp2" style="text-overflow: ellipsis;">today is the first day of march good luck my friend!</p>
+
+    <p class="textoverflowp2" style="text-overflow: clip;">today is the first day of march good luck my friend!</p>
+    <p class="textoverflowp2" style="text-overflow: '>>';">today is the first day of march good luck my friend!</p>
+
+    <!--wordwrap是微软的私有属性,正规用overflow-wrap,与word-break相比，overflow-wrap仅在无法将整个单词放在自己的行而不会溢出的情况下才会产生中断-->
+    <p class="keepall">Most words are short & don't need to break. But Antidisestablishmentarianism is long. The width is set to min-content, with a max-width of 11em.</p>
+    <!--keepall只在带有hyphenate（连字号）的单词处可以折断换行 其余单词均不会被拆分-->
+    <p class="breakall">Most words are short & don't need to break. But Antidisestablishmentarianism is long. The width is set to min-content, with a max-width of 11em.</p>
+    <!--breakall可以任意的拆分单词-->
+    <p class="overflowwrap">Most words are short & don't need to break. But Antidisestablishmentarianism is long. The width is set to min-content, with a max-width of 11em.</p>
+    <!--overflowwrap:word-break只有在单词在box内要溢出时会对它进行拆分换行-->
+    
+    <!--2d 3d变换记住使用transform就可以了,变换规则和android中的一样。注意矩阵的计算方法
+    [a,c,e]  [x]   [ax+cy+e]
+    [b,d,f]* [y] = [bx+dy+f]
+    [0,0,1]  [1]   [0+0+1]     最终的前两项为 x y变换后的坐标,在应对较为复杂的映射时就需要利用矩阵的公式反推出abcdef的值
+-->
+    <a href="https://www.cnblogs.com/meteoric_cry/p/7987548.html" target="_blank"> 旋转矩阵推导公式,通过旋转坐标系的方式来计算新坐标系下的x,y 很巧妙</a>
 </body>
 </html>

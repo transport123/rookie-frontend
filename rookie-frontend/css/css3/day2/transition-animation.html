@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html languages="zh">
+<head>
+<meta charset="utf-8">
+<title>
+过渡与动画
+</title>
+<style>
+.transitiond{
+    background-color: red;
+    width: 300px;
+    height: 300px;
+   
+}
+.transitiond:hover{
+    background-color: yellowgreen;
+    width: 100px;
+    transform: rotate(90deg) translate(150px,150px);
+
+}
+</style>
+</head>
+<body>
+<!--别把transition和transform搞混了，transform也属于元素的一个属性，是一种状态，是施加了矩阵变换的状态；而transition是一种转化过程，即在一定时间内将元素转变为一种状态，它定义的是这个过程所用时间-->
+<div class="transitiond">属性 过渡时长 delay时长 过渡行为(线性还是加速) </div>
+<!--要注意transform中多个变换在组合时是有先后顺序之分的,且坐标系会被影响，比如例子中先旋转90度后,x y 在translate时就不能按照原来的坐标系进行平移了-->
+</body>
+</html>
