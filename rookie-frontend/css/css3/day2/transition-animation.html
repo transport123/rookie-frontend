@@ -10,19 +10,100 @@
     background-color: red;
     width: 300px;
     height: 300px;
-   
+   transition:all 1s;
+
 }
 .transitiond:hover{
     background-color: yellowgreen;
-    width: 100px;
-    transform: rotate(90deg) translate(150px,150px);
+    
+    transform:translate(200px,200px) rotate(90deg) ;
 
+    width: 400px; height :400px;
 }
+
+.animaiond{
+    background-color: red;
+    width: 300px;
+    height: 300px;
+    animation:4s linear  2s rotatingandmoving;
+    animation-fill-mode:forwards;
+    position: relative;
+    border: 1px black solid;
+}
+
+@keyframes rotatingandmoving {
+    0% {background-color: green;}
+    40% {}
+    50% {}
+    100% {transform:translate(200px,200px) rotate(90deg) ;width:400px;height: 400px;}
+}
+
+
+@keyframes tada {
+    from {
+        transform: scale3d(1, 1, 1)
+    }
+    10%, 20% {
+        transform: scale3d(.9, .9, .9) rotate3d(0, 0, 1, -3deg)
+    }
+    30%, 50%, 70%, 90% {
+        transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg)
+    }
+    40%, 60%, 80% {
+        transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg)
+    }
+    to {
+        transform: scale3d(1, 1, 1)
+    }
+}
+
+.button{
+  animation: tada 0s;
+}
+.button.button:hover{
+  animation-duration: 1s;
+}
+
+.button:active{
+  animation: none;
+}
+
+
+.div1{
+  width: 200px;
+  height: 200px;
+  background-color: #f00;
+  transition: all 2s;
+}
+
+.div1:hover{
+  background-color: #00f;
+  transform: translateX(500px) translateY(500px) scale(0.8) rotate(360deg);
+}
+
+
 </style>
 </head>
 <body>
 <!--别把transition和transform搞混了，transform也属于元素的一个属性，是一种状态，是施加了矩阵变换的状态；而transition是一种转化过程，即在一定时间内将元素转变为一种状态，它定义的是这个过程所用时间-->
 <div class="transitiond">属性 过渡时长 delay时长 过渡行为(线性还是加速) </div>
 <!--要注意transform中多个变换在组合时是有先后顺序之分的,且坐标系会被影响，比如例子中先旋转90度后,x y 在translate时就不能按照原来的坐标系进行平移了-->
+
+
+<div class="animaiond"> </div>
+
+<div class="div1">也不会回来</div>
+<button class="button">Default</button>
+<!--transition和animation虽然都可以用来做动画,但还是有些区别的。本质上来说,transition定义的是一种状态到另一种状态的变化过程,所以它需要借助一些触发方式，例如hover使得元素的状态发生了变化，或者
+借助javascript；而animation的触发不需要条件，设置了就可以自动触发。这一点刚好与 transition关注元素property的变化，animation则作用于元素本身而非样式属性 说法呼应
+且animation通过定义关键帧,在每一帧的时候 元素会变成帧内定义的样式(也就是直接作用于元素本身了,transition则是通过hover这种状态变化来改变样式属性)-->
+
+<!--有一种说法是transition改变属性而animation不改变，我个人觉得是不对的，如果你在animation中将width height改变了，属性也确实是改变了;而transform应该是不改变的，只是一种渲染上的映射-->
+
+<!--上面的例子我分别使用transition与animation改变div的宽高，最终它们的属性都发生了变化，根据position的类型(relative static)还将其余元素顶了下去 这说明:1,属性会被真实的影响 
+2,transform不会真实改变box的位置与大小 3,fixed absolute 类型因为不在文档流,所以不会影响其他元素;而relative虽然在文档流,但是top left在改变时也不会真实改变box的位置,宽高的改变确实是
+会改变原有位置处box的大小的-->
+
+<!--:active->none消除动画 active事件结束后状态转变为正常状态->tada 触发一次动画 很巧妙-->
 </body>
 </html>
