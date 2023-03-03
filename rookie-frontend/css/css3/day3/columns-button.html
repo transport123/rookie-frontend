@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html languages="zh">
+<head>
+    <meta charset="utf-8">
+    <title>
+        多列-界面-按钮-分页
+    </title>
+    <style>
+        div.columns {
+            column-count: 3;
+            column-gap: 30px;
+            column-rule: 2px solid green;
+
+        }
+
+        p.columncross {
+            column-span: all;
+        }
+
+        div.resize {
+            resize: both;
+            overflow: auto;
+            width: 200px;
+        }
+
+        div.boxsize {
+            width: 200px;
+            height: 200px;
+            background-image: linear-gradient(red, red), linear-gradient(blue, blue);
+            border: 5px solid black;
+            padding: 10px;
+            background-clip: content-box,padding-box ;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+<div class="columns">
+    当我年轻的时候，我梦想改变这个世界；当我成熟以后，我发现我不能够改变这个世界，我将目光缩短了些，决定只改变我的国家；当我进入暮年以后，我发现我不能够改变我们的国家，我的最后愿望仅仅是改变一下我的家庭，但是，这也不可能。当我现在躺在床上，行将就木时，我突然意识到：如果一开始我仅仅去改变我自己，然后，我可能改变我的家庭；在家人的帮助和鼓励下，我可能为国家做一些事情；然后，谁知道呢?我甚至可能改变这个世界。
+    <p class="columncross">
+        当我年轻的时候，我梦想改变这个世界；当我成熟以后，我发现我不能够改变这个世界，我将目光缩短了些，决定只改变我的国家；当我年轻的时候，我梦想改变这个世界；当我成熟以后，我发现我不能够改变这个世界，我将目光缩短了些，决定只改变我的国家；
+    </p>
+    <img src="rock600x400.jpg" style="display: inline;z-index: -1;"/>
+    <!--<div style="height: 300px;width: 200%;background-color: red;border: 3px solid black;"></div>
+    -->
+    <img src="rock600x400.jpg " style="display: inline; z-index: -1;"/>
+
+    当我年轻的时候，我梦想改变这个世界；当我成熟以后，我发现我不能够改变这个世界，我将目光缩短了些，决定只改变我的国家；当我进入暮年以后，我发现我不能够改变我们的国家，我的最后愿望仅仅是改变一下我的家庭，但是，这也不可能。当我现在躺在床上，行将就木时，我突然意识到：如果一开始我仅仅去改变我自己，然后，我可能改变我的家庭；在家人的帮助和鼓励下，我可能为国家做一些事情；然后，谁知道呢?我甚至可能改变这个世界。
+
+    <!--inline元素的折行行为:由于inline元素只占一行,所以在1/3列中放入两个img后,尽管在显示上它是换了行的,但是两个inline元素放在一起还是一行,此时两个img同属一行,那么这一行的
+        高度就是两个img的高度之和，等到出现换行元素后会进入第二列，且第二列的该行高度也为height*2. block类型的元素默认换行,所以换行后直接将第二个img放入第二列-->
+
+    <!--这里的换行概念有些模糊,与line-box那里的机制不太一样 搁置-->
+</div>
+
+<div class="columns">
+    When I was young, I dreamed of changing the world; when I grew up, I found that I couldn't change the world, so I
+    shortened my sights and decided to change only my country; To be able to change our country, my last wish is just to
+    change my family, but this is also impossible. And now, as I lie on my deathbed, I suddenly realize: If I had only
+    changed myself first, then by example I would have changed my family. From their inspiration and encouragement, I
+    would then have been able to better my country; then, who knows
+</div>
+<!--多列的高度计算应该是个很有趣的问题 它的行为是高度确定之后,每一列从上到下排满后再到下一列中。其实等于在一列中先计算高度然后除以3得到最终高度，
+    当在一列中达到最高高度后换行转到下一列就可以了-->
+
+
+<div>
+    <span>text test span ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss   ssssssssss ssssssssss ssssssssss ssssssssss ssssssssss ssssssssss ssssssssss ssssssssss ssssssssss ssssssssss ssssssssss ssssssssss   </span>
+    <span>text test span ssss</span>
+</div>
+
+<h2>尺寸调整</h2>
+<div class="resize">可以调整大小的div 可以调整大小的div 可以调整大小的div 可以调整大小的div可以调整大小的div</div>
+<div class="boxsize">通过boxsizing改变宽高作用的真实属性 border content</div>
+<!--注意background clip时 box的类型在摆放顺序时会影响最终的行为，个人理解是和z-index有关，background-image在设置多个时从前到后z-index是减小的，对应的padding-box如果放前面z-index就
+最大，就会遮盖z-index较小的content-box，给padding设置颜色的功能就没用了  -->
+</body>
+</html>
