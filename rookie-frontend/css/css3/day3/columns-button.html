@@ -32,11 +32,80 @@
             background-clip: content-box,padding-box ;
             box-sizing: border-box;
         }
+
+        img.radius{
+            border-radius: 30px 60px / 20px 30px;
+        }
+        img.thumbnail{
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 5px;
+            transition: box-shadow 0.5s;
+        }
+        img.thumbnail:hover{
+            box-shadow: 0 0 2px 5px rgba(0, 140, 186, 0.5);
+        }
+
+        img.filter{
+            filter: grayscale(60%);
+            z-index: 1;
+        }
+
+        #modalfrom{
+            width: 300px;
+            height: 200px;
+            border-radius: 5px;
+            padding: 2px;
+            border: 1px black solid;
+        }
+        #modalfrom:hover{
+            box-shadow: 0 0 1px 1px aqua;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+       #modalto{
+            position:fixed;
+            background-color: rgba(0,0,0,0.9);
+            height: 100%;
+            width: 100%;
+            top: 0;
+            left: 0;
+            display: none;
+            padding-top: 100px;
+        }
+        #modaltoimg{
+            max-width: 700px;
+            width: 100%;
+            margin: auto;
+            display: block;
+            animation: scaleto 0.7s;
+            
+        }
+
+        #modalclose{
+            color: white;
+            font-size: large;
+            position: absolute;
+            top: 0;
+            right: 10px;
+        }
+
+        #modalclose:hover,#modalclose:focus{
+            color: #bbb;
+            cursor: pointer;
+        }
+        @keyframes scaleto {
+            from{transform: scale(0.1);}
+            to{transform: scale(1);}
+        }
+
+
     </style>
 </head>
 
 <body>
-<div class="columns">
+<div class="columns" id="anchor">
     当我年轻的时候，我梦想改变这个世界；当我成熟以后，我发现我不能够改变这个世界，我将目光缩短了些，决定只改变我的国家；当我进入暮年以后，我发现我不能够改变我们的国家，我的最后愿望仅仅是改变一下我的家庭，但是，这也不可能。当我现在躺在床上，行将就木时，我突然意识到：如果一开始我仅仅去改变我自己，然后，我可能改变我的家庭；在家人的帮助和鼓励下，我可能为国家做一些事情；然后，谁知道呢?我甚至可能改变这个世界。
     <p class="columncross">
         当我年轻的时候，我梦想改变这个世界；当我成熟以后，我发现我不能够改变这个世界，我将目光缩短了些，决定只改变我的国家；当我年轻的时候，我梦想改变这个世界；当我成熟以后，我发现我不能够改变这个世界，我将目光缩短了些，决定只改变我的国家；
@@ -72,8 +141,35 @@
 
 <h2>尺寸调整</h2>
 <div class="resize">可以调整大小的div 可以调整大小的div 可以调整大小的div 可以调整大小的div可以调整大小的div</div>
-<div class="boxsize">通过boxsizing改变宽高作用的真实属性 border content</div>
+<div class="boxsize" style="z-index: -1;">通过boxsizing改变宽高作用的真实属性 border content</div>
 <!--注意background clip时 box的类型在摆放顺序时会影响最终的行为，个人理解是和z-index有关，background-image在设置多个时从前到后z-index是减小的，对应的padding-box如果放前面z-index就
 最大，就会遮盖z-index较小的content-box，给padding设置颜色的功能就没用了  -->
+<a href="#anchor"  style="z-index: 5;"> 
+<img src="rock600x400.jpg" alt="rockdefault" class="thumbnail filter" />
+</a>
+<br/>
+<!--margin auto 和 display block 使得图片水平居中，auto只对左右有效-->
+<img src="img_lights.jpg" alt="north light" id="modalfrom">
+<div id="modalto">
+<span id="modalclose">X</span>
+<img src="img_lights.jpg" alt="modalimg" id="modaltoimg" />
+</div>
+
+<script>
+    var imgfrom = document.getElementById("modalfrom");
+    var imgto  = document.getElementById("modalto");
+    imgfrom.onclick=function(){
+        imgto.style.display="block";
+
+    }
+
+    document.getElementById("modalclose").onclick=function(){
+        imgto.style.display="none";
+
+    }
+</script>
+
 </body>
+
+
 </html>
