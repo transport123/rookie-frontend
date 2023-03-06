@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html languages="zh">
+<head>
+<meta charset="utf-8">
+<title>
+猜数字
+</title>
+
+<style>
+html {
+        font-family: sans-serif;
+}
+body {
+    width: 50%;
+    max-width: 800px;
+    min-width: 480px;
+    margin: 0 auto;
+  }
+  
+.form input[type="number"] {
+    width: 200px;
+}
+
+.lastResult {
+    color: white;
+    padding: 3px;
+}
+</style>
+</head>
+
+<body>
+<h1 style="text-align: center;">Number guessing game</h1>
+
+<p>We have selected a random number between 1 and 100. See if you can guess it in 10 turns or fewer. We'll tell you if your guess was too high or too low.</p>
+
+<div class="form">
+  <label for="guessField">Enter a guess: </label>
+  <input type="number" min="1" max="100" required id="guessField" class="guessField">
+  <input type="submit" value="Submit guess" class="guessSubmit" >
+</div>
+<!--通过margin auto 进行水平居中 整个body是水平居中-->
+<div class="resultParas">
+  <p class="guesses"></p>
+  <p class="lastResult"></p>
+  <p class="lowOrHi"></p>
+</div>
+
+<script>
+let randomNumber = Math.floor(Math.random()*100)+1;
+const guesses = document.querySelector('.guesses');
+const lastResult = document.querySelector('.lastResult');
+const lowOrHi = document.querySelector('.lowOrHi');
+
+const guessSubmit = document.querySelector('.guessSubmit');
+const guessField = document.querySelector('.guessField');
+let guessCount =1;
+let resetButton;
+
+function checkGuess()
+{
+    const guessNumber = Number(guessField.value);
+    if(guessCount===1 ){// 判断完全相等要使用 === 此语句等于重置guesses元素
+        guesses.textContent ='Previous guesses:';
+    }
+    guesses.textContent+= `${guessNumber} `;
+    if(guessNumber===randomNumber)
+    {
+        lastResult.textContent='Congratulation!You gotta it!';
+        lastResult.style.backgroundColor='green';
+        lowOrHi.textContent='';
+        startGameOver();
+    }else if(guessCount==10)
+    {
+        lastResult.textContent='Sorry!You lose!';
+        lowOrHi.textContent='';
+        startGameOver();
+    }else{
+        lastResult.textContent='Wrong!';
+        lastResult.style.backgroundColor = 'red';
+        if(guessNumber>randomNumber)
+        {
+            lowOrHi.textContent='High';
+        }else{
+            lowOrHi.textContent='Low';
+        }
+    }
+    guessCount++;
+    guessField.value='';
+    guessField.focus();
+}
+
+guessSubmit.addEventListener('click',checkGuess);
+
+function startGameOver()
+{
+    resetButton = document.createElement('button');
+    resetButton.textContent='start new game';
+    guessSubmit.disabled=true;
+    guessField.disabled=true;
+    document.body.append(resetButton);
+    resetButton.addEventListener('click',resete);
+
+}
+
+//reset不能在这里赋值，因为执行到这里resetbutton还是空的 
+function resete()
+{
+
+    guessCount =1;
+    guessSubmit.disabled=false;
+    guessField.disabled=false;
+
+    const textparas = document.querySelectorAll('.resultParas p');
+    for(const textpara of textparas)
+    {
+        textpara.textContent='';
+    }
+    
+    lastResult.style.backgroundColor='white';
+
+    guessField.value='';
+    guessField.focus();
+
+    resetButton.parentNode.removeChild(resetButton);
+    randomNumber = Math.floor(Math.random() * 100) + 1;
+}
+
+</script>
+</body>
+</html>
