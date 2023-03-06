@@ -260,6 +260,8 @@
 <a href="#" class="basicbutton buttonshadow">链接按钮</a>
 
 <button class="basicbtn btnpush">按下</button>
+<!--波纹按钮实际上是利用after做了一个蒙层的元素 并通过改变它的位置达成效果 思路非常的奇特 通过控制不同状态下的 transition的值使得过渡时间发生改变 设置为0就取消了transition的过程 直接就变成了对应的状态
+需要注意的是伪类对于样式的值的改变都是马上起作用的,transition是在之后基于时间发生的一个过渡动画 （有点解释不清，但有一点很清楚，transition在状态改变后发生改变的话，取的是当前的transition的值对于过渡动画生效）-->
 </body>
 
 
