@@ -56,3 +56,29 @@ defer能保证不同脚本的顺序执行，并且看到一种说法defer虽然�
 较为一致
 
 所以async并不是解决 “执行顺序” 的方案，原则上在脚本内部还是不要操作dom树，它的出现主要是解决阻塞问题，即加载js会阻塞html的解析，出现加载时间过长的问题 参考链接：https://segmentfault.com/q/1010000022143102 还是比较可信的
+
+3，var与let的区别
+
+```javascript
+//var的变量提升特性使得只要在一个域内 用var声明变量，即使这个变量在赋值之后，也是有效的
+vartype='vartype';
+var vartype;
+//这种写法用let是不行的，且这种写法只在脚本中有效，在console中也不行
+
+//var 可以重复的定义变量
+var duplicate = 1;
+var duplicate = 2;
+//let 同样不行
+//可以的话尽量使用let，它减少了可能产生的语义不明，使得代码能够更加规范
+```
+
+4，数据类型
+
+js中全都是对象吗？x 也是有6种基本类型的
+
+js是动态语言，不需要指定类型，会自动推断类型。使用typeof可以看到当前类型
+
+```javascript
+let dog = {name:'doggie',type:'big',age:'number'};//定义对象的方式，暂时了解即可
+```
+
