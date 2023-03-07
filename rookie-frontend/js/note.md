@@ -82,3 +82,71 @@ js是动态语言，不需要指定类型，会自动推断类型。使用typeof
 let dog = {name:'doggie',type:'big',age:'number'};//定义对象的方式，暂时了解即可
 ```
 
+要注意js种的数字全部都是Number类型，不分int float等
+
+5，===与==
+
+===表示值和类型都相等，==表示只需要值相等
+
+6，字符串
+
+```javascript
+let string = "double quote";
+let str = 'single quote';
+//string需要用引号包裹，单双都可以，但请保持一致。
+let containd='this will "work"';
+let contains="this will 'work' too";
+//如上所示不同的引号可以包裹，但是相同的不行，它会引起歧义
+let fatalcontain='this won't work';
+//该语句会报错 使用转移字符解决该问题
+let contain = 'i\'m a good man';
+```
+
+字符串拼接使用+,数字在拼接时自动转成字符串；
+
+```javascript
+let mynum = 20;
+let mystr = mynum.toString();
+mystr++;
+mynum=Number(mystr);
+//数字与字符串的互转
+```
+
+字符串相关api：
+
+```javascript
+let stringapi='stringapi';
+stringapi.length;
+stringapi[0];
+stringapi[stringapi.length-1];
+stringapi.indexOf('api');//字符串匹配，将返回匹配的首字母位置，没有匹配的则返回-1;
+stringapi.slice(0,3);//提取字符串，str 第一个参数表示起始位置，第二个参数为结束位置的后一个位置（不包含该位置)
+//第二个参数可以不用，表示从0开始剩余的所有字符
+stringapi.toLowerCase();
+stringapi.toUpperCase();//大小写转换
+stringapi=stringapi.replace('api','stringgg!');//注意可以不等长，且replace并不会真的改变原有string对象的值，需要重新赋值。猜测string在js中也是不可变对象，所以操作string返回的都是新对象。
+//replace只会替换第一个找到的字符，replaceall会替换所有的
+```
+
+7，数组
+
+```javascript
+let arrstr=['ss','ss','gg'];
+let random = ['ss',0,[9,10,20]];//js的数组可以混合类型
+random[2][2];//20 数组包含数组的情况
+arrstr.length;//3 长度
+```
+
+数组api：
+
+```javascript
+//数组与字符串的转换
+let myData = 'Manchester,London,Liverpool,Birmingham,Leeds,Carlisle';
+let myarr = myData.split(',');//通过,分割成数组
+myData = myarr.join(',');//通过，与join函数将数组拼接成一个新的字符串
+myData=myarr.toString();//虽然也是数组转为字符串，但是分隔符不可控
+let newLength=myarr.push('scotland');//push向数组尾部加入新元素，并返回新数组的长度
+let removedItem=myarr.pop();//pop删除数组尾部元素，并返回该删除的元素
+//unshift对应push，shift对应pop 只不过它们针对的是数组的首部
+```
+
