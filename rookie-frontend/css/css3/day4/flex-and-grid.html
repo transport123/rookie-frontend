@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html languages="zh">
+
+<head>
+    <meta charset="utf-8">
+    <title>
+        弹性盒子与网格
+    </title>
+    <style>
+        html {
+            font-family: sans-serif;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        header {
+            background: purple;
+            height: 100px;
+        }
+        h1{
+            text-align: center;
+            margin: 0;
+            color: white;
+            line-height: 100px;
+        }
+        article{
+            background: aqua;
+            padding: 10px;
+            margin: 10px;
+            flex: 1 200px;
+        }
+        article:nth-of-type(3){
+            flex: 2 200px   ;
+        }
+        section{
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row-reverse;
+        }
+
+
+        button {
+        font-size: 18px;
+        line-height: 2;
+        width: 15%;
+      }
+
+      div {
+        height: 100px;
+        border: 1px solid black;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+      }
+
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Sample flexbox example</h1>
+    </header>
+    <!--通过申明display为flex将一个容器定义为弹性盒子。容器本身为块级的属性，它的子元素为flex项；申明为inline-flex同样有效，不过子元素的行为类似于行内元素
+    main axis 为沿着flex项放置方向的轴，cross axis为垂直于放置方向的轴。放置方向由flex-direction控制，默认为row
+    在没有设置flex-wrap属性且水平方向放置时，当子元素很多时，由于无法换行，子元素的宽度会变得很窄，为了显示子元素的所有内容只能将其在垂直方向延申到”屏幕外“
+    wrap就代表可以折行，同时在子元素中设置flex:200px表示子元素的最小宽度为200px
+    flex的缩写代表了三个属性 flex-basis:具体长度，表示flex项最小需要的宽度；flex-grow:无单位的比例值，表示在flex-basis基础上，剩下的空间按照比例进行分配
+    flex-shrink:溢出量，较高级，暂不讨论
+    align-items表式在交叉轴方向的对齐行为，默认为stretch，会将flex项拉伸至和父容器等高；如果父容器没有固定的高度，则所有flex项最终和最高的flex项保持一致的高度
+    而center就使得flex项在交叉轴方向居中;flex项的align-self会覆盖该属性
+    justify-content表示主轴上如何放置flex项，center为居中，space-around则表示会均匀分布flex项且两端都留有一些空间-->
+    
+    <section>
+        <article>
+            <h2>First article</h2>
+
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday
+                carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag
+                polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo
+                booth health goth gastropub hammock.</p>
+        </article>
+
+        <article>
+            <h2>Second article</h2>
+
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday
+                carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag
+                polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo
+                booth health goth gastropub hammock.</p>
+        </article>
+
+        <article>
+            <h2>Third article</h2>
+
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday
+                carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag
+                polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo
+                booth health goth gastropub hammock.</p>
+
+            <p>Cray food truck brunch, XOXO +1 keffiyeh pickled chambray waistcoat ennui. Organic small batch paleo
+                8-bit. Intelligentsia umami wayfarers pickled, asymmetrical kombucha letterpress kitsch leggings
+                cold-pressed squid chartreuse put a bird on it. Listicle pickled man bun cornhole heirloom art party.
+            </p>
+        </article>
+
+
+        <article>
+            <h2>Fourth article</h2>
+    
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo booth health goth gastropub hammock.</p>
+          </article>
+    
+          <article>
+            <h2>Fifth article</h2>
+    
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo booth health goth gastropub hammock.</p>
+          </article>
+    
+          <article>
+            <h2>Sixth article</h2>
+    
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo booth health goth gastropub hammock.</p>
+    
+            <p>Cray food truck brunch, XOXO +1 keffiyeh pickled chambray waistcoat ennui. Organic small batch paleo 8-bit. Intelligentsia umami wayfarers pickled, asymmetrical kombucha letterpress kitsch leggings cold-pressed squid chartreuse put a bird on it. Listicle pickled man bun cornhole heirloom art party.</p>
+          </article>
+    
+          <article>
+            <h2>Seventh article</h2>
+    
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo booth health goth gastropub hammock.</p>
+          </article>
+    
+          <article>
+            <h2>Eighth article</h2>
+    
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo booth health goth gastropub hammock.</p>
+          </article>
+          <article>
+            <h2>Ninth article</h2>
+    
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo booth health goth gastropub hammock.</p>
+    
+            <p>Cray food truck brunch, XOXO +1 keffiyeh pickled chambray waistcoat ennui. Organic small batch paleo 8-bit. Intelligentsia umami wayfarers pickled, asymmetrical kombucha letterpress kitsch leggings cold-pressed squid chartreuse put a bird on it. Listicle pickled man bun cornhole heirloom art party.</p>
+          </article>
+    
+          <article>
+            <h2>Tenth article</h2>
+    
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo booth health goth gastropub hammock.</p>
+          </article>
+    
+          <article>
+            <h2>Eleventh article</h2>
+    
+            <p>Tacos actually microdosing, pour-over semiotics banjo chicharrones retro fanny pack portland everyday carry vinyl typewriter. Tacos PBR&B pork belly, everyday carry ennui pickled sriracha normcore hashtag polaroid single-origin coffee cold-pressed. PBR&B tattooed trust fund twee, leggings salvia iPhone photo booth health goth gastropub hammock.</p>
+          </article>
+    
+
+
+    </section>
+
+
+    <div>
+        <button>Smile</button>
+        <button>Laugh</button>
+        <button>Wink</button>
+        <button>Shrug</button>
+        <button style="align-self: flex-end; order: -1;">Blush</button>
+        <!--通过order可以改变flex项的顺序，但不会改变它在dom树中的顺序
+        order值越大越靠后，order值相等则按照原顺序进行排列-->
+      </div>
+
+
+</body>
+
+</html>
