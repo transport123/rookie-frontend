@@ -150,3 +150,12 @@ let removedItem=myarr.pop();//pop删除数组尾部元素，并返回该删除�
 //unshift对应push，shift对应pop 只不过它们针对的是数组的首部
 ```
 
+8，条件语句
+
+**任何不是null NaN undefined 0 false ”“的值都返回true，这一点要特别小心**
+
+其余的点和Java几乎完全一致
+
+9，循环
+
+也和java几乎一致
