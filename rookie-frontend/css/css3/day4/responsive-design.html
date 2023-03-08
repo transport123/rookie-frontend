@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html languages="zh">
+
+<head>
+    <meta charset="utf-8">
+    <title>
+        响应式布局
+    </title>
+    <style>
+        @media screen and (orientation:landscape) and (max-width:500px) {
+            body {
+                color: green;
+            }
+        }
+        @media not all{
+            body{
+                color: blue;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!--
+        将宽高用具体的数值与单位设定时，就变成了固定宽度站点，使用者浏览器过宽时可能会用很长的一行显示，过窄时则需要用下方的scrollbar去浏览；
+        使用百分比设定时就是液态站点，总是占据一定比例的空间，小屏幕上会挤成一团（只能换行增加高度来显示内容）
+        所以提出了响应式布局来自适应不同设备尺寸 通过组合使用下面的手段来达到这一目的。
+        1，使用媒体查询
+        2，灵活网格（float+媒体查询+百分比设置宽高)
+        3,(columns,flex,grids)
+        4,响应式图像(设置img的srcset和sizes属性下载不同尺寸的图像并配合maxwidth)
+        5，响应式排版（利用媒体查询动态改变fontsize等内容大小，而不是仅仅改变布局方式）
+        6，viewport标签 将 视口宽度设置为 设备宽度（手机浏览器默认的视口宽度并不是手机的宽度)
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+    -->
+
+    <h2>media queries</h2>
+    <div>
+        <ol>
+            <li>
+                媒体查询的写法:@media media-type and (media-rule){styles}
+            </li>
+            <li>
+                orientation表示设备是水平放置还是垂直放置
+            </li>
+
+            <li>
+                hover表示用户是否能悬浮于某元素上（使用鼠标；触摸屏和键盘是没法悬浮的）
+            </li>
+                pointer则是更细的划分了悬浮类型 none 没有，fine 鼠标指针，coarse 手指
+            <li>
+                and表示与逻辑 逗号表示或逻辑 非逻辑用not
+            </li>
+        </ol>
+        媒体查询的断点：当宽高达到某个阈值时，更改布局使得页面排版更加合理，这个阈值就是断点。
+        设计思路：先按照最窄（移动端）的方式去设计垂直方向的简单布局，随着宽度的不断增加，考虑是否在某个节点可以将部分竖直的排版放到一行中，活用flex和grid属性来改变它的排布方向与比例
+        使用em单位或许是比px更好的选择。em是根据fontsize来计算的，如果上下文没有设置fontsize则会使用浏览器默认的值。所以你可以通过改变fontsize级联的改变使用em单位的元素的宽高，间隔。
+    </div>
+</body>
+
+</html>
