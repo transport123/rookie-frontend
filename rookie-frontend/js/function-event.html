@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Random color example — event handler property</title>
+    <style>
+      button {
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <button>Change color</button>
+    <script>
+      const btn = document.querySelector('button');
+
+      function random(number) {
+        return Math.floor(Math.random()*number);
+      }
+
+      function bgChange() {
+        const rndCol = 'rgb(' + random(255) + ',' + random(255) + ',' + random(255) + ')';
+        document.body.style.backgroundColor = rndCol;
+      }
+
+      btn.onblur = bgChange;
+      //btn:onfocus 获取焦点 onblur 失去焦点 ondblclick 双击 onmouseover 鼠标移入 onmouseout鼠标移出
+      //window: onkeypress 按下按钮（整个过程) onkeydown(按下) onkeyup(抬起) 注意设置button的这几个事件不会起作用，要设置给代表整个浏览器的window
+    </script>
+  </body>
+</html>

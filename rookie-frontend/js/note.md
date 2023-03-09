@@ -177,7 +177,7 @@ let myFunction= function(){
 //之后我们可以通过这种方式调用
 myFunction();
 //但是不推荐这种调用方式，它看起来很费解
-//这种方式也成为 函数表达式，与声明函数有一些区别。声明函数会进行声明提升，即放在后面的声明我们在前面也能用到;而函数表达式不会进行提升（let肯定不提升,不清楚var会不会)
+//这种方式也称为 函数表达式，与声明函数有一些区别。声明函数会进行声明提升，即放在后面的声明我们在前面也能用到;而函数表达式不会进行提升（let肯定不提升,不清楚var会不会)
 ```
 
 **JS的函数传参不是必须的，如果某种情况不需要参数直接调用并不会”编译“不通过，不过你需要在运行时对这种情况做出相应的特殊处理，比如判空操作**
@@ -185,3 +185,96 @@ myFunction();
 函数内部的作用域是隔离的，域里面的变量等不会被外部访问；函数的最外层是全局作用域，它里面的变量可以在任意地方访问。
 
 所以在全局作用域中定义变量是要小心的，因为我们常会引入多个js文件，这难免会造成冲突。
+
+**需要注意函数声明后当你使用 f()时，只要带了括号就是函数调用，此处就代表函数返回值；如果你想给一个变量赋值函数就不可以带括号，带了括号意义就变了**
+
+```javascript
+function f()
+{
+    //do-sth
+}
+let arg = f; //这是函数赋值
+let value=f();//这是函数调用，由于f返回void 则value也是void
+
+```
+
+```javascript
+for(let num of nums)
+{
+	num;        
+}
+//不带index的for循环使用 of 关键字		
+```
+
+函数篇最需要注意的一点：由于JS没有编译阶段，函数在定义时无论是参数还是返回值 都是不确定的，可能为空，可能为其他类型，或者根本不存在，即使是多参数的函数也可以不传参，所以一定要多考虑这些默认情况下的处理，使用isNaN等函数做好特殊情况处理
+
+11，事件介绍
+
+btn:onfocus 获取焦点 onblur 失去焦点 ondblclick 双击 onmouseover 鼠标移入 onmouseout鼠标移出
+
+window: onkeypress 按下按钮（整个过程) onkeydown(按下) onkeyup(抬起) 注意设置button的这几个事件不会起作用，要设置给代表整个浏览器的window
+
+**尽量避免在html中内嵌事件处理器的赋值**
+
+```html
+<button onclick="inner()"></button>
+<script>
+function inner()
+{
+        
+}
+</script>
+这种写法会使整个html结构混乱，难以管理
+```
+
+**新引入的addEventListener和removeEventListener有着更强大的功能**
+
+```javascript
+const btn = document.querySelector('button');
+btn.addEventListener('click',listener);
+function listener(){
+    
+}
+function listenertwo()
+{
+    
+}
+//相较于传统的
+btn.onclick=listener
+//这种写法可以通过remove方法移除事件,且当调用
+btn.addEventListener('click',listenertwo);
+//并不会移除原有的listener函数 而如果用
+btn.onclick=listener1
+//就会进行覆盖，是没法实现这种效果的
+```
+
+**事件对象**
+
+在给某个事件注册一个监听后，当在触发该事件时，js中其实有一个隐式的传参
+
+```javascript
+btn.onclick=handleEvent;
+function handleEvent(e){
+    e.target.style.background='red';
+}
+//当handleEvent因为事件触发被调用时，实际上调用了handleEvent(event)，这里传入的event就是这个事件对象
+//该对象包含一系列有用的属性，可以供我们在函数体中使用
+//目前最需要关注的就是e.target 该target即直接触发该事件的元素，这一点务必搞清楚，即使是冒泡传递事件，target也永远是最初的那个元素
+
+```
+
+**阻止默认行为**
+
+有的事件自带一些默认行为，例如表单的提交，当你点击表单中的submit时，如果你没有设置validate判断条件的话，表单里的内容就会被直接提交，而大多数时候我们都想在函数体中进行一些输入的合法判断，所以要阻止次类事件的默认行为
+
+```javascript
+
+form.onsubmit=function(e){
+    if(非法){
+        e.preventdefault();//阻止默认行为，注意仍然是e来调用，所以event非常有用
+    }
+}
+//提交行为隶属于表单，而不是其中具体某个input
+```
+
+**事件捕获与冒泡**
