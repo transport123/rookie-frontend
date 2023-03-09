@@ -17,7 +17,71 @@
                 color: blue;
             }
         }
+
+
+        .container{
+            width: 80%;
+            margin: auto;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 200px 1fr 1fr;
+            grid-template-rows: 100px 1fr 1fr;
+            gap: 20px;
+            border: 1px solid black;
+          
+
+        }
+
+
+
+        .container > div, .minmaxautofill > div,.overflowgrid > div,.gridarea > div{
+            border-radius: 5px;
+            padding: 10px;
+            background-color: rgb(207,232,220);
+            border: 2px solid rgb(79,185,227);
+        }
+        
+
+        .overflowgrid {
+            width: 80%;
+            margin: auto;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns:1000px repeat(2,1fr);
+       
+            grid-auto-rows: minmax(100px,auto);
+
+        }
+
+        .minmaxautofill{
+            width: 80%;
+            margin: auto;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(250px,1fr));
+            gap: 10px;
+   
+
+        }
+        .gridarea{
+            width: 80%;
+            margin: auto;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-areas:
+            "one one"
+            "two three"
+            ". four"
+            "five six"
+            "seven seven";
+        }
+
+
     </style>
+
+
+
 </head>
 
 <body>
@@ -56,6 +120,69 @@
         设计思路：先按照最窄（移动端）的方式去设计垂直方向的简单布局，随着宽度的不断增加，考虑是否在某个节点可以将部分竖直的排版放到一行中，活用flex和grid属性来改变它的排布方向与比例
         使用em单位或许是比px更好的选择。em是根据fontsize来计算的，如果上下文没有设置fontsize则会使用浏览器默认的值。所以你可以通过改变fontsize级联的改变使用em单位的元素的宽高，间隔。
     </div>
+
+
+    <div class="container">
+        <div style="grid-column-start: 2;">One</div>
+        <div>Two</div>
+        <div>Three</div>
+        <div style="height: 200px;">Four</div>
+        <div>Five</div>
+        <div>Six</div>
+        <div>Seven</div>
+    </div>
+    <!--fr可以和具体的数值一起使用，表示剩余空间所占比例
+        使用repeat(number,x)创建number个x宽度的列
+        显式网格与隐式网格 
+        首先得明白网格其实是有固定容量的，grid-template-columns与grid-template-rows分别显式的定义列数，行数 假设这两个属性我们都设置了，那么网格的数量就是列数*行数，
+        当任意属性缺失时网格数量就变成了0，此时所有的网格都自动变成隐式网格 即未设置的那条轨道会通过grid-auto-rows或者grid-auto-columns的值去设置其宽高
+        假如此时我们的container中有超过这个数量的子元素，那么该子元素就会被加入隐式网格中，由于隐式网格没有定义的行数与列数，所以就通过定义的宽高进行自适应的排列，这个
+        特性在自适应需求时非常有效。
+        列宽的计算较好理解，毕竟大部分情况下container的宽度都是已知的，fr根据剩余空间进行比例分配就好了；但是container很多时候都是没有具体高度的，此时出现fr就没有任何含义，
+        我想它的计算方式应该和flex类似，当使用fr去定义行时 假设之前没有出现fr，那么此时会将该行最高的元素作为此行高，并将该行高默认定义为1fr （经过验证应该是这样)
+    -->
+
+    <div class="overflowgrid">
+        <div>One</div>
+        <div>Two</div>
+        <div>Three</div>
+        <div>Four</div>
+        <div>Five</div>
+        <div>Six</div>
+        <div>Seven</div>
+    </div>
+    <!--显式网格和隐式网格都可以使用minmax函数 auto其实也是根据当前context下的剩余空间与格子本身所占空间来计算出的
+    尝试了以下强行将一列宽度定义超过container的宽度，由于overflow的特性还是能显示，不过由于剩余空间为0所以fr失效，使用fr的元素宽度均变成其原始尺寸-->
+
+    <!--使用autofill自动填充表格 需要注意这里是 格子定义 时的自动填充，即格子宽度会根据container宽度自动变化，且有一个最小值，即使你的元素宽度大于格子宽度，
+    后续格子也会被放到 格子定义时的正确位置上，一定要注意元素宽度和格子宽度是没有关系的，上面的例子中1000px之所以将后续格子顶出，是因为我们定义了一个1000px的格子，
+    而不是放到这个地方的元素有1000px-->
+    <div class="minmaxautofill">
+        <div class="one">One</div>
+        <div class="two">Two</div>
+        <div class="three">Three</div>
+        <div class="four">Four</div>
+        <div class="five">Five</div>
+        <div class="six">Six</div>
+        <div>Seven</div>
+    </div>
+
+
+
+
+    <div class="gridarea">
+        <div style="grid-area: one;">One</div>
+        <div style="grid-area: two;">Two</div>
+        <div style="grid-area: three;">Three</div>
+        <div style="grid-area: four;">Four</div>
+        <div style="grid-area: five;">Five</div>
+        <div style="grid-area: six;">Six</div>
+        <div style="grid-area: seven;">Seven</div>
+    </div>
+
+    <!--grid colum start end是定义某个元素在格子中的位置的...非常的奇怪
+    grid-template-area是一种更直观的摆放格子的方式
+要使用gridarea对子元素命名-->
 </body>
 
 </html>
