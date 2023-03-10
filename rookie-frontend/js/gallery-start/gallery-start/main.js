@@ -6,6 +6,19 @@ const overlay = document.querySelector('.overlay');
 
 /* Declaring the array of image filenames */
 let myimages=['images/pic1.jpg','images/pic2.jpg','images/pic3.jpg','images/pic4.jpg','images/pic5.jpg']
+
+//improvement
+let myimages1=['pic1.jpg','pic2.jpg'];
+let myalts2={
+    'pic1.jpg':'eyes',
+    'pic2.jpr':'seas'
+}
+/*for(const image of myimages1)
+{newImage.setAttribute('src', 'images/${image}');
+newImage.setAttribute('alt', myalts2[image]);
+this might be a better way...
+}*/
+
 /* Declaring the alternative text for each image file */
 let myalts=['eyes','seas','flowers','drawing','butterfly']
 
