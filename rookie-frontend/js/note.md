@@ -318,3 +318,85 @@ arr.name //正确
 js中的对象成员是动态的，即使你没有提前定义你也可以通过.或者[]的方法去访问并赋值
 
 []的访问方法有一个优势，因为我们可以将字符串传入[]内去访问，字符串本身是动态的，就达到了动态访问成员的目的
+
+### 对象与原型
+
+
+
+由于以前接触的都是面向对象（以类和对象为结构）或者是面向过程的语言，对于原型这个概念相当陌生，加上mozilla的翻译和语言组织在这一章相当混乱，把我饶了好久，最后总结出以下一些原则。
+
+**暂时不考虑Class创建对象的情况，这里只阐述原型对象**
+
+1，每个对象都有一个 原型对象(\_\_proto\_\_属性)，这是在对象创建时就默认的，它和我们自定义的其他属性没有区别，就是一个正常的字段，我们知道属性的类型可能是 基本类型(不太确定js是否有基本类型) 或者 对象，而该proto属性也是一个对象；
+
+2，由上面的原则，我们可以推断出proto自身 也有自己的 proto对象；
+
+3，函数本身也是一个对象，那么函数也有自己的proto对象(nativecode)；
+
+4，但是函数有一个特殊的属性叫做prototype，这个东西我称之为原型模板，一定不要把它和proto混淆，且这是函数对象（也就是 f 对象）才自带的对象，我们正常创建的对象是没有这个属性的
+
+5，原型模板相当于 定义了一个proto，使得通过该函数为构造器创建对象时，对象的proto等于该原型模板
+
+6，由5得知，通过函数new对象时，默认的proto就是函数的prototype。也可以通过obj2=Object.create(obj1) 以obj1为原型对象创建一个新对象
+
+7，由6得知，默认情况下，create中的参数为空，那么就以Object的prototype为原型对象创建对象，这也解释了为什么默认情况下我们都能使用Object的原型模板中的方法
+
+8，原型链访问只能聚集在该链上，也就是说原型对象外的方法或属性我们是访问不到的
+
+9，对于一个独特的构器造函数而言，原型模板是唯一的一个对象，所有由它“创建”的对象中的proto都指向这一个原型模板对象，相当于一种 组合 的形式来构建新对象。所以如果我们扩展原型模板，不推荐添加新的属性值，因为所有对象共享这一份属性，makes no sense。对应的，扩展方法会是一个好的选择，因为可以通过this始终访问对象自身的属性，并在方法内做相应的运算得到想要的结果
+
+10，prototype属性会有一个constructor属性，指该原型模板隶属于哪个构造器函数。我们可以通过原型链，用obj.constructor来访问到该构造器函数本身。
+
+
+
+**原型对象也只不过是一个普通的对象，且构造器函数也是一个对象，prototype只是构造器函数的一个属性，这也就代表对于一个构造器而言，真实存在的对象只有一个，那么该类型构造器的原型模板对象也只有一个，任何由该构造器创建的对象的 原型对象 都指向同一个原型模板**
+
+
+
+自己画的图，能涵盖上方的知识点：
+
+![原型对象图解](notes-drawio/js-prototype.drawio.svg)
+
+_tips_:
+
+1,在函数体（构造器）内定义属性，在原型上扩展方法
+
+```js
+function Person(name,age,....)
+{
+    let this.name = name;
+    let this.age = age;
+    //定义对象属性
+}
+
+//在原型模板上去扩展方法
+Person.prototype.getName=function(){
+    return this.name;//依然可以通过this访问到该 Person对象，且不同对象的name属性各不相同
+};
+Person.prototype.getAge=function(){};
+
+
+//假设我们定义了
+Person.prototype.fullname;
+//由于prototype只是一个普通的对象，它怎么样都无法映射出所有的Person对象的全名，所以用函数来解决这种问题
+```
+
+2，通过create创造对象
+
+```js
+let person2 = Object.create(person1);
+person2.__proto__;//__proto__=person1
+//但是此时person2就不能说是 Person 类型的对象了，因为它并不是由Person构造器创建的
+//且person2自己也没有name等属性，它只能通过链式访问到person1的name等属性
+```
+
+3，巧用constructor
+
+```js
+let person1 = new Person('sam','kack',24);
+person1.constructor;//输出f: Person(name,age....)
+//constructor是原型模板的一个属性，所以由构造器创建的对象都可以通过链式访问到它
+person1.constructor.name;//Person
+let person2 = new person1.constructor('jack','jones',22);//使用这种方法来new对象，假如我们不知道构造器函数是什么，这种方式就很好的解决了问题
+```
+
