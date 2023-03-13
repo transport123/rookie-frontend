@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>测试：类是如何通过原型实现继承的</title>
+</head>
+
+
+<body>
+
+    <script>
+        class Person{
+            name;
+            constructor(name)
+            {
+                this.name = name;
+            }
+            introduce()
+            {
+                console.log(`hi i'm a person ${this.name}`)
+            }
+        }
+        class Student extends Person{
+            grade;
+            constructor(name,grade)
+            {
+                super(name);
+                this.grade=grade;
+            }
+            introduce()
+            {
+                console.log(`im a student ${this.name} my grade is ${this.grade}`)
+            }
+
+        }
+    </script>
+</body>
+
+</html>

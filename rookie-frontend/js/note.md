@@ -400,3 +400,31 @@ person1.constructor.name;//Person
 let person2 = new person1.constructor('jack','jones',22);//使用这种方法来new对象，假如我们不知道构造器函数是什么，这种方式就很好的解决了问题
 ```
 
+### 原型与对象
+
+
+
+### 模板字符串
+
+
+
+
+
+### JSON
+
+```javascript
+//json的形式与js中申明对象的形式完全一致，不过只能使用双引号，且属性名也必须用双引号包裹，不可省略
+let arrjson=[{"name":"jack","age":20},
+             {"name":"jack","age":20},
+             {"name":"jack","age":20}]
+let request = new XMLHttpRequest();//使用xhr创建http请求
+request.responseType='json';//设置返回类型为json
+request.onload=function(jsonObj){
+    //在设置返回处理函数时jsonObj就根据responseType转换成了json对象，我们可以直接使用此对象访问它的属性
+    let name = jsonObj[0]['name'];
+}
+//数组也是合法的json
+JSON.parse(text);//将字符串转换为json对象
+JSON.stringfy(jsonObj);//将json对象转换为字符串
+```
+
