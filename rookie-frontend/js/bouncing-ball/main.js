@@ -5,7 +5,7 @@ const ctx = canvas.getContext('2d');
 
 const width = canvas.width = window.innerWidth;
 const height = canvas.height = window.innerHeight;
-
+const pe=document.querySelector('p');
 // 生成随机数的函数
 
 function random(min,max) {
@@ -46,7 +46,7 @@ function EvilCircle(x,y,exists,size,color){
 
 EvilCircle.prototype.draw=function()
 {
-  ctx.beginPath;
+  ctx.beginPath();
   ctx.lineWidth=3;
   ctx.strokeStyle=this.color;
   ctx.arc(this.x,this.y,size,0,Math.PI*2);
@@ -57,20 +57,20 @@ EvilCircle.prototype.checkBounds=function()
 {
   if(this.x+this.size>=width) 
   {
-    this.x=width-this.size;
+    this.x=width-this.size-5;
   }
   if(this.x<=this.size)
   {
-    this.x=this.size;
+    this.x=this.size+5;
   }
   if(this.y+this.size>=height )
   {
-    this.y=height-this.size;
+    this.y=height-this.size-5;
   }
 
   if( this.y<=this.size)
   {
-    this.y=this.size;
+    this.y=this.size+5;
   }
 }
 
@@ -79,16 +79,16 @@ EvilCircle.prototype.setControls=function(){
   window.onkeydown = e => {
     switch(e.key) {
       case 'a':
-        this.x -= this.velX;
+        this.x -= this.velx;
         break;
       case 'd':
-        this.x += this.velX;
+        this.x += this.velx;
         break;
       case 'w':
-        this.y -= this.velY;
+        this.y -= this.vely;
         break;
       case 's':
-        this.y += this.velY;
+        this.y += this.vely;
         break;
     }
   };
@@ -99,12 +99,15 @@ EvilCircle.prototype.collisionDetect=function()
 {
   for(let i=0;i<balls.length;i++)
   {
-   
+    if(!balls[i].exists)
+      continue;
     let dx = this.x-balls[i].x;
     let dy=this.y-balls[i].y;
     if(Math.sqrt(dx*dx+dy*dy)<(this.size+balls[i].size))
     {
       balls[i].exists=false;
+      ballnumber--;
+      pe.textContent=`还剩${ballnumber}个球`;
     }
   }
 }
@@ -135,7 +138,7 @@ Ball.prototype.update=function(){
 
 //创建所有的小球
 let balls=[];
-while(balls.length<1){
+while(balls.length<25){
 let size = random(10,40);
 let ball=new Ball(random(size,width-size),
 random(size,height-size),
@@ -145,7 +148,8 @@ size,
 randomColor());
 balls.push(ball);
 }
-
+let ballnumber = balls.length;
+pe.textContent=`还剩${ballnumber}个球`;
 
 //创建恶魔圈
 let size = random(10,40);
@@ -160,8 +164,8 @@ function loop()
   ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
   ctx.fillRect(0, 0, width, height);
 
-  evilcircle.draw();
   evilcircle.checkBounds();
+  evilcircle.draw();
   evilcircle.collisionDetect();
 
   for(const ball of balls)
@@ -189,7 +193,7 @@ Ball.prototype.collapse=function(){
 
     let dx = this.x-balls[i].x;
     let dy=this.y-balls[i].y;
-    if(Math.sqrt(dx*dx+dy*dy)<(this.size+balls[i].size))
+    if(Math.sqrt(dx*dx+dy*dy)<(this.size+balls[i].size)&&balls[i].exists)
     {
       this.color=balls[i].color=randomColor();
       
