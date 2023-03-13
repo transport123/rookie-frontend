@@ -400,7 +400,90 @@ person1.constructor.name;//Person
 let person2 = new person1.constructor('jack','jones',22);//使用这种方法来new对象，假如我们不知道构造器函数是什么，这种方式就很好的解决了问题
 ```
 
-### 原型与对象
+### 原型与类
+
+ES6引入了class 
+
+```javascript
+class Parent{
+    
+    constructor(name){
+        this.name=name;
+    }
+    
+    static sayHello()
+    {
+        
+    }
+    sayname(){
+        
+    }
+}
+class Child extends Parent{
+    constructor(name,age){
+        super(name);
+        this.age=age;
+    }
+    sayage()
+    {
+        
+    }
+}
+let p=new Parent("jack");
+let c=new Child("rose",19);
+```
+
+从以上的继承中我们可以得到以下的行为:
+
+Parent.sayHello() --可执行
+
+Child.sayHello()  --可执行
+
+p.name; --值为jack
+
+c.name; --值为rose  这说明Child的实例单独拥有name属性
+
+p.sayname();  --可以执行
+
+c.sayname();  --可以执行
+
+c.sayage();   --可以执行
+
+
+
+ES5中是如何实现类似class的行为？
+
+```javascript
+//难点1：属性如何继承
+//不难看出在class中其实不不在constructor外申明变量同样可以为对象申明属性，我想真正起作用的其实还是constructor内部的
+//this.attr=value,也就是这类语句真实的为对象申明了属性。super其实就相当于调用了一遍父类的constructor，所以子类对象也等同于声明了父类中的属性。我想es5中的call 或 apply 函数是类似的机制，本质上等于将此段语句在“子类”函数体中执行了一遍
+Parent.call(this,attr1,attr2...);
+//难点2：静态方法如何继承
+//Parent和Child本身为函数对象
+Parent.sayHello = function(){};//就使得Parent本身有了sayHello的方法 想要Child通过原型链访问，只能使得
+Child.__proto__=Parent；//也就是在 函数对象 这一层面上，Child能使用Parent所有的属性与方法
+//难点3：非静态方法如何继承
+Parent.prototype.sayname=function(){};//使得Parent的对象p能够使用sayname()方法 而Child的对象c是从Child.prototype
+//中寻找，很显然没有这个方法，那么就要到Child.prototype.__proto__中找，这里不要被搞晕了，原型链的寻找永远都是以__proto__为指向，只不过Child的对象c的__proto__就是Child的prototype，也就是
+c.__proto__.__proto__ === Child.prototype.__proto__; //true 所以我们通过
+Child.prototype.__proto__=Parent.prototype;//此赋值操作就使得原型链能访问到sayname
+// Child.prototype=Object.create(Parent.prototype); 这么写也可以
+
+Child.prototype.constructor=Child;//一定不要忘了给constructor赋值，prototype一定会有一个constructor，表明构造器函数是哪个函数对象
+
+Child.prototype.sayage=function(){};//最后通过此方法给Child的对象定义方法，即完成
+
+```
+
+比较晦涩的几点：（纯理论上要如何去理解）
+
+1，为什么Child Parent的prototype不是由Function的prototype创造的，而是由Object的prototype创造的（prototype到底意味着什么，又是谁发起的建造）
+
+2，Child的proto为什么是Parent
+
+3，Child.prototype.proto为什么是Parent.prototype
+
+
 
 
 
