@@ -688,3 +688,37 @@ aFetch();//由于申明了函数为异步，它并不会阻塞主线程
 何为resolve，Promise C是怎样才会依赖于Promise B
 
 https://thenewtoys.dev/blog/2021/02/08/lets-talk-about-how-to-talk-about-promises/
+
+异步大杂烩：
+
+https://www.one-tab.com/page/5m9HT8jOQF-bqz8mcYzmEg
+
+Promise并不是实现了异步机制，它是解决了回调地狱！
+
+
+
+
+
+### 返回值
+
+then方法返回一个[`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)，而它的行为与then中的回调函数的返回值有关：
+
+
+
+- 如果then中的回调函数返回一个值，那么then返回的Promise将会成为接受状态，并且将返回的值作为接受状态的回调函数的参数值。
+
+
+
+- 如果then中的回调函数抛出一个错误，那么then返回的Promise将会成为拒绝状态，并且将抛出的错误作为拒绝状态的回调函数的参数值。
+
+
+
+- 如果then中的回调函数返回一个已经是接受状态的Promise，那么then返回的Promise也会成为接受状态，并且将那个Promise的接受状态的回调函数的参数值作为该被返回的Promise的接受状态回调函数的参数值。
+
+
+
+- 如果then中的回调函数返回一个已经是拒绝状态的Promise，那么then返回的Promise也会成为拒绝状态，并且将那个Promise的拒绝状态的回调函数的参数值作为该被返回的Promise的拒绝状态回调函数的参数值。
+
+
+
+- 如果then中的回调函数返回一个未定状态（pending）的Promise，那么then返回Promise的状态也是未定的，并且它的终态与那个Promise的终态相同；同时，它变为终态时调用的回调函数参数与那个Promise变为终态时的回调函数的参数是相同的。
