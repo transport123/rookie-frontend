@@ -695,9 +695,7 @@ https://www.one-tab.com/page/5m9HT8jOQF-bqz8mcYzmEg
 
 Promise并不是实现了异步机制，它是解决了回调地狱！
 
-
-
-
+# todo.............
 
 ### 返回值
 
@@ -722,3 +720,51 @@ then方法返回一个[`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/J
 
 
 - 如果then中的回调函数返回一个未定状态（pending）的Promise，那么then返回Promise的状态也是未定的，并且它的终态与那个Promise的终态相同；同时，它变为终态时调用的回调函数参数与那个Promise变为终态时的回调函数的参数是相同的。
+
+## 初步理解异步机制
+
+1，JS执行引擎为单线程，浏览器会为每个tab页分配一个该线程去执行同步的JS语句。这些语句以 函数/帧 的形式存放在一个 执行栈 中，以先进后出的行为去执行，并且不会阻塞
+
+2，异步任务会被交给 异步线程去执行，注意这里的异步线程并不隶属于JS，而是浏览器的实现，如setTimeout, XHR 等；
+
+3，当异步任务完成后，会将该异步任务的 回调 放入一个 任务队列中，遵循先进先出的行为，当执行栈中为空（即没有帧时），主线程便会从任务队列中取出一个回调，放入执行栈中执行，循环往复；
+
+setTimeout与setInterval的差别：
+
+```javascript
+//使用timeout模仿interval的特性
+function recursiveTimeout(fn,delay){
+    function interval(){
+        setTimeout(interval,delay);
+        fn();
+    }
+setTimeout(interval,delay)    
+} 
+
+setTimeout(function(){
+  	console.log('1');
+    //.......blocking
+    setTimeout(arguments.callee,1000)//自己调用自己 callee就代表该函数本身
+},1000);
+
+//两种方式其实是一样的，都是在一个递归函数中使用setTimeout把自己当作回调函数加入 任务队列
+
+//setTimeout的细节：
+//setTimeout只是在规定时间把回调加入任务队列的队尾，该任务的执行则需要满足1：函数栈中为空 2：自己已经处于队列头部
+//所以setTimeout(0)只是立刻把任务加入了任务队列，当前函数如果没有执行完，它是不可能被执行的
+
+//setInterval是指每隔指定时间就将任务加入 任务队列，所以即使该任务执行时间较长（超过延迟时间），任务队列中也会在规定的时间时加入新的任务，该任务会在上一个任务执行完成后立刻执行；
+//而当使用setTimeout模仿时，如果将setTimeout放在函数体末尾，前方的blocking时长会影响任务的加入时机，也就是blocking+time，和interval有差别；当语句放在函数体最前方时，行为几乎一致。
+
+
+```
+
+https://github.com/JChehe/blog/blob/master/posts/%E5%85%B3%E4%BA%8EJavaScript%E5%8D%95%E7%BA%BF%E7%A8%8B%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BA%8B.md
+
+https://www.cnblogs.com/WindrunnerMax/p/12712018.html
+
+浏览器内核是用c++写的，所以当然能使用多线程
+
+chrome edge不支持使用file协议访问worker的js文件来创建worker
+
+await会改变promise对象的行为，再仔细想想

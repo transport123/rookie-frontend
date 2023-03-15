@@ -1,0 +1,49 @@
+<!DOCTYPE html >
+<html  languages="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>
+alarm
+</title>
+</head>
+<body>
+    <button id="set-alarm">Set alarm</button>
+    <div id="output"></div>
+    <script>
+        const alarm=document.querySelector("#set-alarm");
+        const output=document.querySelector("#output");
+        alarm.addEventListener("click",useAsync);
+
+        function doAlarm()
+        {
+            setTimeout(function(){
+                output.textContent="wake up!";
+            },1000)
+        }
+
+        function promiseAlarm(delay){
+            return new Promise((resolve,reject)=>{
+                if(delay<0) throw new Error('Alarm delay must not be negative');
+                setTimeout(()=>{
+                    resolve(`wake up after${delay/1000} seconds`)
+                },delay);
+            })
+        }
+
+        function doPromise()
+        {
+            promiseAlarm(2000).
+            then((content)=>{
+                output.textContent=content;
+            })
+        }
+
+        async function useAsync()
+        {
+            let asyncResult =await promiseAlarm(100);//通过await关键字使得返回的是promise中回调函数返回的结果，而不再是promise对象
+            output.textContent=asyncResult;
+        }
+
+    </script>
+</body>
+</html>
