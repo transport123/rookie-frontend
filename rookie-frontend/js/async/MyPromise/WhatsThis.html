@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+  </head>
+
+  <body>
+
+
+    <script>
+        class MyThis{
+            constructor(fn)
+            {
+                this.x=1;
+                let another= fn.bind(this);
+                another();
+            }
+            mythen(){
+                const thenThis=new MyThis(function changeX(){
+                    this.x=2;
+                })
+                return thenThis;
+            }
+        }
+        let before = new MyThis(function log(){
+        });
+        let after = before.mythen();
+        let myPromise = new Promise((resolve)=>{
+          resolve();
+        });
+        // if(typeof myPromise ==='object')
+        //   console.log('true');
+        const duplication=function(){
+          let used;
+          if(used)
+            console.log('used');
+          used=true;
+        }
+        duplication();
+        duplication();
+        
+    </script>
+  </body>
+
+</html>
