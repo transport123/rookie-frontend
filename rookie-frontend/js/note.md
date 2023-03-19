@@ -695,6 +695,26 @@ https://www.one-tab.com/page/5m9HT8jOQF-bqz8mcYzmEg
 
 Promise并不是实现了异步机制，它是解决了回调地狱！
 
+### Promise 实现原理
+
+1，通过then将cb推入前一个promise的cb队列；利用了js的函数特性：箭头函数本身无this，this是scope外的指针，以便在then中传入的回调函数中访问this.cb仍然是前一个promise的cb队列
+
+```javascript
+then(callback){
+    return new Promise((resolve,reject)=>{
+        
+        ......
+        this.cblist.push(callback)//这里的this仍然是本Promise，而不是then返回的promise，这一点一定要搞清楚
+        //包括bind函数的用法，也需要清晰，明白一件事：this只是一个地址，当你不使用bind，new关键字时，函数内部本身
+        //该值是undefined，这里使用箭头函数恰好规避了这一点，因为访问的是then域中的this，也就是原本的promise
+    })
+}
+```
+
+2，需要解决回调继续返回promise的问题，即将then这一步生成的promise1的resolvePromise函数在该返回值Promise2的回调中调用，也就是promise2在回调时调用promise1的resolve，这是核心思想。仍然是利用函数的特性，p2的回调中调用的resolvePromise仍然是p1内部定义的函数，继续访问就访问到p1的resolve，非常巧妙
+
+3，thenable中used不是针对promise对象的，而是实现了then的对象，需要保证这些对象在实现then时是规范的，内部不可以重复调用相关的resolve和reject。需要着重理解used这个东西是怎么访问的 这是js比较‘神奇’的一点，即使是函数执行完了，其中定义的变量也并不是一定会销毁
+
 # todo.............
 
 ### 返回值
