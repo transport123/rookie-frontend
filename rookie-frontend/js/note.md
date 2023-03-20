@@ -689,10 +689,6 @@ aFetch();//由于申明了函数为异步，它并不会阻塞主线程
 
 https://thenewtoys.dev/blog/2021/02/08/lets-talk-about-how-to-talk-about-promises/
 
-异步大杂烩：
-
-https://www.one-tab.com/page/5m9HT8jOQF-bqz8mcYzmEg
-
 Promise并不是实现了异步机制，它是解决了回调地狱！
 
 ### Promise 实现原理
@@ -714,6 +710,10 @@ then(callback){
 2，需要解决回调继续返回promise的问题，即将then这一步生成的promise1的resolvePromise函数在该返回值Promise2的回调中调用，也就是promise2在回调时调用promise1的resolve，这是核心思想。仍然是利用函数的特性，p2的回调中调用的resolvePromise仍然是p1内部定义的函数，继续访问就访问到p1的resolve，非常巧妙
 
 3，thenable中used不是针对promise对象的，而是实现了then的对象，需要保证这些对象在实现then时是规范的，内部不可以重复调用相关的resolve和reject。需要着重理解used这个东西是怎么访问的 这是js比较‘神奇’的一点，即使是函数执行完了，其中定义的变量也并不是一定会销毁
+
+
+
+todo:promise流程已经看懂，存留疑问1 ，x被解决并不能使外层的then也被解决，除非x中的resolve(y) y是非thenable，否则外层then依旧是pending状态，并且依赖于此y的终态；所以x或者x.then这种中间promise是否被解决，似乎不那么严谨，因为x.then最终也执行了resolvePromise(null)，它也被解决了；2，静态函数还不够清晰，需要重看两遍 all函数没有正确实现，需要查阅另一版的代码 3，微任务的具体实现是否真的有必要，如果有必要那它的正确行为是什么，和宏任务相比执行顺序是怎样，（不管实现细节）如何在业务开发中意识到哪些操作是异步的（这才是保证异步顺序正确的关键，这些规范并不能完全帮到我们）4，async和await的实现原理
 
 ### 返回值
 
@@ -879,6 +879,8 @@ ServiceWorker：为客户端提供一种离线的服务
 5，更新
 
 6，删除
+
+过期机制：https://gomakethings.com/how-to-set-an-expiration-date-for-items-in-a-service-worker-cache/
 
 
 
