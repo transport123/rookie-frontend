@@ -715,29 +715,17 @@ then(callback){
 
 3，thenable中used不是针对promise对象的，而是实现了then的对象，需要保证这些对象在实现then时是规范的，内部不可以重复调用相关的resolve和reject。需要着重理解used这个东西是怎么访问的 这是js比较‘神奇’的一点，即使是函数执行完了，其中定义的变量也并不是一定会销毁
 
-# todo.............
-
 ### 返回值
 
 then方法返回一个[`Promise`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)，而它的行为与then中的回调函数的返回值有关：
 
-
-
 - 如果then中的回调函数返回一个值，那么then返回的Promise将会成为接受状态，并且将返回的值作为接受状态的回调函数的参数值。
-
-
 
 - 如果then中的回调函数抛出一个错误，那么then返回的Promise将会成为拒绝状态，并且将抛出的错误作为拒绝状态的回调函数的参数值。
 
-
-
 - 如果then中的回调函数返回一个已经是接受状态的Promise，那么then返回的Promise也会成为接受状态，并且将那个Promise的接受状态的回调函数的参数值作为该被返回的Promise的接受状态回调函数的参数值。
 
-
-
 - 如果then中的回调函数返回一个已经是拒绝状态的Promise，那么then返回的Promise也会成为拒绝状态，并且将那个Promise的拒绝状态的回调函数的参数值作为该被返回的Promise的拒绝状态回调函数的参数值。
-
-
 
 - 如果then中的回调函数返回一个未定状态（pending）的Promise，那么then返回Promise的状态也是未定的，并且它的终态与那个Promise的终态相同；同时，它变为终态时调用的回调函数参数与那个Promise变为终态时的回调函数的参数是相同的。
 
@@ -785,6 +773,119 @@ https://www.cnblogs.com/WindrunnerMax/p/12712018.html
 
 浏览器内核是用c++写的，所以当然能使用多线程
 
-chrome edge不支持使用file协议访问worker的js文件来创建worker
+## 微任务
 
-await会改变promise对象的行为，再仔细想想
+微任务本身只是一种定义规范，就像promiseA+规范一样，js的运行环境是否真的有微任务的调度要看运行环境实现了没有。
+
+浏览器中使用microTicker
+
+如果没有实现就只能通过setTimeout(fn,0) ’宏‘任务来实现
+
+## async与await原理
+
+yield+next
+
+
+
+## webworker
+
+worker赋予了我们’多线程‘的能力，可以在worker中处理一些耗时操作，并通过message来进行交互。message就相当于一个回调函数一样，当我们postMessage时就相当于把整个函数调用加入了对应线程的任务队列中，等到任务到达head位置时就调用该任务。postMessage的参数就是调用函数的入参，可以自由定义类型，{command:'',data:''}是一种比较规范的方式，通过command来判断具体要做什么
+```js
+//worker.js 创建worker需要的js文件，定义了worker如何处理不同的message
+addEventListener('message',(message)=>{
+    if(message.command==='task'){workerTask(message.data)};
+    if(message.command==='other'){//dosth else,postMessage
+    }
+})
+
+function workerTask(data)
+{
+    let i=0;
+    while(i<100000)
+        i++;
+	let result = data*2;
+    postMessage({command:'double',data:result});
+}
+
+//创建worker的js文件
+
+const worker=new Worker('path');
+worker.addEventListener('message',(message)=>{
+  if(message.command==='double'){p.textcontent=message.data}  
+})
+btn.addEventListener('click',()=>{
+    worker.postMessage({command:'task',data:10})
+})
+
+```
+
+需要注意，由于js中多线程是不安全的，所以worker与js的执行线程完全隔离，只能通过这种消息机制来交互；且worker中无法访问dom树。这种Woker是dedicated worker，较为常用。
+
+SharedWorker：和普通worker使用方法一致，但是相当于一个单例，
+
+```js
+//sharedworker.js
+onconnect=function(event){
+    const port = event.ports[0];
+    let addevent = false;
+    if(addevent){
+         port.onmessage=function(e){
+             const result = e.data['attr1']+e.data['attr2'];
+             //通过e.data访问post出的具体数据，你也可以在这里加上command
+             port.postmessage(result);
+         }
+    }else{
+        port.addEventListener('message',function(e){
+            //same
+        })
+        port.start();//注意如果使用addEventListener添加onmessage事件，还需要手动调用worker.port.start()
+    }
+}//共享worker每次连接时，通过event的ports[0]来绑定对应的事件
+
+
+//caller1.js
+if(!!window.SharedWorker){//!{expression}将表达式转换为boolean并取反,!!就等于将表达式转换为bool取正，很巧妙
+    const sWorker=new SharedWorker('path');
+//接收消息如何处理
+	sWorker.port.onmessage=function(event){
+    	p.textContent=event.data;	
+	}
+    
+	btn.onclick=function(e){
+    sWorker.port.postMessage('msg');
+	}
+}
+//caller2.js
+//和caller1有相同的结构，它们共用同一个SharedWorker实例，通过不同的连接port去访问这同一个实例(个人理解)
+//在SharedWorker中定义的变量相当于是共享的，值的改变对所有caller都是可见的，某些场景可以利用这一特征
+```
+
+
+
+
+
+
+
+ServiceWorker：为客户端提供一种离线的服务
+
+1，注册-安装，这个阶段主要通过缓存机制，通过指定的key将需要的资源全部缓存到本地 主要注意 caches,cache,install事件；
+
+2，需要在service中定义 fetch的相关机制，步骤1只是将资源下到了本地，也就是我们通过浏览器url去访问时有了对应的缓存；但是我们通过js加载的资源还是原来的方式，所以需要通过一层‘代理’，指定fetch对request响应的函数，改变fetch的response行为，以便来使用本地资源
+
+3，丰富fetch的代理机制，不断的去fallback到最原始的请求方式；还可以在fetch时对未缓存的新图片进行缓存
+
+4，service worker预加载--？
+
+5，更新
+
+6，删除
+
+
+
+**SW的使用一定要小心，因为一旦注册并指定缓存，它将一直存在于客户端；必须1，删除所有key的相关缓存 2，必须unregister对应的service（service应该是和 源 绑定的，一个源下对应多个service，不然不就可以把别人的service也删掉了吗？）**
+
+
+
+
+
+chrome edge不支持使用file协议访问worker的js文件来创建worker。在vscode中go live使用http协议打开index就可以成功创建worker对象了。
