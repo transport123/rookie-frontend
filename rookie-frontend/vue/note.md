@@ -185,3 +185,52 @@ tips: 一些浏览器不支持通过OPTION发起的预检请求的重定向，�
 
 
 文档：https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS#%E5%8A%9F%E8%83%BD%E6%A6%82%E8%BF%B0
+
+#### 使用代理Proxy
+
+该方案原理非常简单，以Vue举例，开发环境下在Vue前端服务器上开启一个代理服务器，axios中使用‘/api’标识需要代理的请求，此时在发起请求时会通过代理服务器请求资源，“代理服务器”更像一个中间件，虽然此时它的端口和vue服务器端口不同，但是它本身允许跨域访问，且在response中进行了一些伪装使得客户端无法检测，也就完成了整体的跨域。
+
+```js
+amodule.exports = {
+    devServer: {
+        host: '127.0.0.1',
+        port: 8084,
+        open: true,// vue项目启动时自动打开浏览器
+        proxy: {
+            '/api': { // '/api'是代理标识，用于告诉node，url前面是/api的就是使用代理的
+                target: "http://xxx.xxx.xx.xx:8080", //目标地址，一般是指后台服务器地址
+                changeOrigin: true, //是否跨域
+                pathRewrite: { // pathRewrite 的作用是把实际Request Url中的'/api'用""代替
+                    '^/api': "" 
+                }
+            }
+        }
+    }
+}
+
+```
+
+需要注意该方案只在开发环境下起作用，因为生产环境下客户端是从nginx上等静态服务器请求页面资源，除非项目中加入了‘代理中间件’，否则客户端本地不存在代理这个东西，自然就无法使用。
+
+通过配置nginx的代理也可以实现：
+
+```
+server {
+    listen    80;
+    # server_name www.josephxia.com;
+    location / {
+        root  /var/www/html;
+        index  index.html index.htm;
+        try_files $uri $uri/ /index.html;
+    }
+    location /api {
+        proxy_pass  http://127.0.0.1:3000;
+        proxy_redirect   off;
+        proxy_set_header  Host       $host;
+        proxy_set_header  X-Real-IP     $remote_addr;
+        proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+    }
+}
+```
+
+相当于始终向该nginx请求。
