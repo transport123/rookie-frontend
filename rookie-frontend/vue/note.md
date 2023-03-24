@@ -110,10 +110,78 @@ https://vue3js.cn/interview/JavaScript/pull_up_loading_pull_down_refresh.html#%E
 
 由于实在找不到scroll事件产生的具体机制，我只能按照这种思路去理解和记忆。黔驴技穷（也令我惊讶为何google也查不到类似的问题）
 
-
-
-
+这是chromium的官方事件模型文档，留个坑吧，也不知道什么时候能涉及到这些知识，似乎将浏览器原理的人非常少，也没有找到太多的技术资源。https://chromium.googlesource.com/chromium/src/+/HEAD/docs/ui/input_event/index.md
 
 currentTarget（只读对象）：只有在事件调用时可以访问到，在console中直接打印event看到该属性是null。该值始终表示实际绑定该事件的元素
 
 Target：表示触发事件的元素
+
+### 跨域方案
+
+原因：为了安全，浏览器限制脚本内的跨 源(origin) http请求。即只能从 加载该资源（脚本）本身的源去请求资源。举个例子：客户端A（浏览器）访问https://domain.com加载了对应的html+css+js，当js文件下载完成后，js脚本通过xhr或者fetch向https://domainx.com发起请求加载图片，由于前后的域发生了变化，该请求就被视为跨域请求，默认情况下就会失败。
+
+源由 地址+端口+协议来唯一标识，任何一个不同都会视为不同源。
+
+方案一：
+
+#### 跨域资源共享（CORS）
+
+通过在HTTP头中加入一组新的标头字段，**通过服务器申明哪些源有权限访问哪些资源**。但是对于 非简单请求 还需要进行一次通过OPTION发起的 预检请求（preflight request)来判断服务器是否允许此次CORS，这几个概念是CORS中的核心机制。
+
+**简单请求**:
+
+1，简单请求不会触发cors预检机制，即该请求就是原请求且response中包含了需要的资源；
+
+2，满足以下所有条件才是一个简单请求：
+
+​	Ⅰ. 使用 get/post/head 方法之一；
+
+​	Ⅱ. 只有一部分标头可以人为的设置 Accept/Accept-Language/Content-Language/Content-Type/Range，其中Content-Type还有更	多的限制。tips：有一部分标头是用户代理自动设置(如Connection，user-agent + forbidden request headers：
+
+​	 https://developer.mozilla.org/zh-CN/docs/Glossary/Forbidden_header_name 即编程人员无法通过代码修改，其实就是 用户代理-	浏览器 帮我们做了	这件事，持有对这些标头的完全控制，保证了安全)
+
+​	Ⅲ. Content-Type指定的媒体类型只能是三者之一 text/plain	multipart/form-data	application/x-www-form-urlencoded
+
+​	Ⅳ. 如果是XHR发出的请求，XHR不能注册upload事件
+
+​	Ⅴ. 请求中不可以有ReadableStream对象
+
+3，此时request 中包含 origin标识请求源，response中包含 Access-Control-Allow-Origin 标识允许的请求源；通过这两个标头即可完成一次简单的跨域请求
+
+
+
+**预检请求**:
+
+当一个请求不满足简单请求时，会先发起一次预检请求。该请求通过 OPTIONS方法发起，标头包括 Access-Control-Request-Method标识原request的 请求方式，Access-Control-Request-Headers表示原request中的‘待检查’标头；response中通过Access-Control-Allow-Origin/Methods/Headers来和该请求对应，标识是否允许访问。
+
+当该预检请求成功返回且所有的检查都通过后，才会发起真正的原请求。
+
+tips: 一些浏览器不支持通过OPTION发起的预检请求的重定向，有一些方案
+
+1，将请求改为简单请求，避免预检请求；
+
+2，去掉服务端的重定向
+
+-------->方案退化
+
+1，通过简单请求获取重定向的真实地址
+
+2，使用真实地址再去重新发起请求
+
+
+
+**身份凭证**
+
+默认情况下，跨域请求xhr/fetch不会发送身份凭证信息（cookies等）
+
+如果需要的话要在request中将withCredentials设置为true，实际的请求此时会带上cookie；
+
+对应的服务器返回的Access-Control-Allow-Credentials也必须设置为true，否则响应内容会被客户端忽略；
+
+且Access-Control-Allow-Origin/Headers/Methods不可以使用 *，必须明确指明允许的源/头/方法；
+
+预检请求本身不能包含身份凭据，但是它的response需要Access-Control-Allow-Credentials来指明本次跨域请求可以携带身份凭据
+
+
+
+文档：https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS#%E5%8A%9F%E8%83%BD%E6%A6%82%E8%BF%B0
