@@ -20,9 +20,137 @@ main.js会创建app,并将创建的app挂载到index中的对应id上;
 
 
 
+## 响应式基础
+
+**无论是组合式还是响应式，因为都是通过代理对象来实现的响应式，所以更改属性是务必使用代理对象而不是原对象，因为原对象不是响应式的，尽管更改它的属性会表现在代理对象上，但是不会刷新DOM**
+
+### 选项式响应
+
+Vue3中的数据通过JS中的Proxy代理来实现响应式，下面这个例子可以很好的解释这一现象
+
+```vue
+export default{
+data(){
+return{
+	objectA:{}
+}
+}
+
+mounted(){
+let objectB={};
+this.objectA=objectB;
+if(this.objectA===objectB)
+//false
+}
+
+}
+
+```
+
+在对objectA赋值时，objectA成为了objectB的一个代理，应该是new Proxy(objectB,handler)，所以它们不相等。好处是objectA始终是响应式，objectB不会成为响应式。
+
+尽管是Vue是响应式更新，但是DOM的更新不会在数据跟新后立刻就刷新。数据更新会被暂时缓冲，在下一次‘flush’时统一更新。使用nextTick()可以确保访问的DOM元素是在真实更新后的。
+
+Vue3是深层响应的，即对一个{object:{nested:{data:1}}}而言，当通过object.nested.data进行改变时，也能检测到是object的变化从而响应此改动。也可以通过 let shallow=shallowReactive(first:1,nested:{data:1})创建浅响应数据，即只有直接属性改变会被检测到：shallow.first会被检测到，shallow.nested.data改动则不会。
+
+**有状态**的方法参见APP.VUE中的例子。主要注意需要对不同组件实例分别创建单独的函数对象，不能让它们共享。
+
+**特别注意，即使是在选项式中，对象类型的属性也仍是一个proxy，这一点通过console可以验证，可能就是用的reactive方法创建的proxy；而基础类型的属性虽然console打印出来是原始值，但不清楚具体是如何实现的。可能的方案：1，reactive不支持原始类型，所以使用reactive对象包裹，但reactive似乎不支持解包，所以可能不行；2，使用ref(0)创建，利用自动拆包的特性。如果是ref我就可以通过value去访问它的rawvalue，且需要导入ref方法，但是通过value访问到的是undefine，且我们不需要导入ref也能申明原始类型属性，所以应该就是this的一个真实属性，至于它为何是响应式的就不太清楚了**
+
+### 组合式响应
+
+~~vue中将不同的组件整合到一个大的组件上是另一种开发模式，但是暴露出的组件在编写时和选项式有一些差异。~~
+
+组合式需要用到 setup钩子函数，并在其中将属性return出去来暴露。
+
+通过<script setup>语法糖来简化编写过程。
+
+最开始使用reactive方法创建响应式对象，但是原始类型无法使用该方法，上面已经说过。
+
+**重要**：
+
+在组合式中，无论是ref还是reactive，由于此时响应式的对象是初始赋值时的对象，当我们尝试使用author = ref({})替换整个对象时，该操作不会生效，且相当于切断了原有的响应链，后续即使改变author的属性也不能响应，因为此时author指向的对象不是响应式的！
+
+这里还有一些例子，需要仔细理解
+
+```javascript
+const state = reactive({ count: 0 })
+
+// n 是一个局部变量，同 state.count
+// 失去响应性连接
+let n = state.count
+// 不影响原始的 state
+n++
+
+// count 也和 state.count 失去了响应性连接
+let { count } = state
+// 不会影响原始的 state
+count++
+
+// 该函数接收一个普通数字，并且
+// 将无法跟踪 state.count 的变化
+callSomeFunction(state.count)
+
+```
+
+为了解决一部分上述的问题，ref出现了
+
+1，基础类型可以使用ref，会返回一个带有value属性的ref对象，且该value值为基础类型的值；如果是对象类型则会自动通过reactive返回一个proxy并赋给value
+
+2，尽管此时替换整个ref仍然会切断响应链，但此时我们不必这么做，因为想替换原对象的话只需要改变value的值，那么ref对象本身的地址没变，它的响应链仍然存在，value发生变化也就能成功响应
+
+3，由于ref在使用时是一种引用，也就打破了基础类型传值的限制，当我们通过函数传递一个ref(1)的实参时，传递的实际是ref的地址，在函数体内访问的仍然是原有的ref，那么响应链就没有被切断
+
+```javascript
+const objectRef = ref({ count: 0 })
+
+// 这是响应式的替换
+objectRef.value = { count: 1 }
+
+const obj = {
+  foo: ref(1),
+  bar: ref(2)
+}
+
+// 该函数接收一个 ref
+// 需要通过 .value 取值
+// 但它会保持响应性
+callSomeFunction(obj.foo)
+
+// 仍然是响应式的
+const { foo, bar } = obj
+```
+
+**ref在模板中的解包原则**
+
+最顶层的ref会被自动解包，否则不会
+
+```js
+const top = ref(1)//会自动解包
+const inner = {inner:ref(1)}//inner.inner+1不会解包运行为1+1
+
+const {innertotop} =inner//等于将innertotop提升到最顶层，那么innertotop就等于最顶层的一个ref
+```
+
+但是有一个特例，如果没有使用表达式，inner.inner会被解包，因为它代表了最终值。
+
+**ref在响应式对象中的解包**
+
+1，只有嵌套在深层响应式对象中的ref才会被解包；
+
+2，当外层响应式对象是一个数组或map时，当通过下标或key访问ref时不会被解包
 
 
-### vue ref和element plus节点
+
+## 计算属性
+
+计算属性会缓存计算结果，在第一次计算后，只有当函数体内的 响应式数据 发生改变才会再次调用方法重新计算结果。而调用函数则会每次都重新调用，在面对较为耗时的操作时，计算属性在性能表现上会优于函数。但是计算属性不如函数灵活，函数可以传参，是一个真正的方法，而计算属性其实更像一个 响应式的数据，只不过这个数据要经过一些原始数据的计算。
+
+计算属性本质是一个 ref ，理论上在访问时要通过ref.value来访问真实值，但是在模板中会自动解包，所以可以直接使用。事实上我们定义的 响应式属性都是 ref，但是在使用中似乎不需要ref.value;回想起昨天在获取dom节点时使用console.log时必须要用value才能打印出真实的dom节点
+
+注意最好不要在computed中的函数直接更改响应式对象的属性值，而是通过副本返回。且最好不要产生副作用，如异步请求或是dom树的改变。
+
+## vue ref和element plus节点
 
 1，ref的用法是没问题的，无论是语法糖setup还是export default方式都是ok的。vue2使用$refs的方式，vue3中也能兼容；vue3更推荐使用const elid=ref(null)的方式，不过要注意如果是export的方式得在setup中return这些refs
 
