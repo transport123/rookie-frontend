@@ -168,6 +168,158 @@ style中支持属性（前缀）多值，实际取值会取数组中浏览器所
 
 需要注意：样式的绑定有点琐碎，写法种类比较多，要熟练掌握{}的写法，将其视为json对象的定义方式，项与项之间用，隔开；
 
+组件上的样式行为:
+
+```vue
+<MyComponent :class="{active:isActive}">
+
+</MyComponent>
+<!--假设p为MyComponent的根元素,当isActive为true时active会传递给p;如果有多个根元素需要指定哪个元素来接收组件的class样式-->
+<p :class="$attrs.class">
+</p>
+<div>
+</div>
+<!--其实是组件的属性透传，多个根元素都可以接收-->
+```
+
+
+
+## v-if与v-show
+
+注意事项：
+
+v-if可以加在整个template上用来表示整个模板是否存在；
+
+v-else必须搭配v-if一起使用；v-else不能单独使用，也不能和v-show放在一起；
+
+v-else-if的使用和编程语言中的else if基本类似，接在v-if后即可；
+
+v-if在切换时有较大的开销，因为它是真实的创建与销毁一个元素。v-show只是单纯的改变display的属性；
+
+建议需要频繁切换的话使用v-show，如果变动很少可以使用v-if，v-if的初始开销相对较小。
+
+**v-if不推荐和v-for放在一起使用，这样会使两者的优先级不明显 参考文档：**
+
+**https://cn.vuejs.org/style-guide/rules-essential.html#use-component-scoped-styling**
+
+## v-for与列表
+
+### v-for与v-if的正确混合用法
+
+v-if的优先级要比v-for高，所以先执行，那么下面这个例子中就会抛出error。
+
+```vue
+<ul>
+    <li	v-for="user in users"
+        v-if="user.isActive">
+        {{user.name}}
+    </li>
+</ul>
+<!--因为在执行if时user这个变量还不存在，所以会抛出错误。需要通过计算属性来修正，即先filter出符合条件的集合，再全部渲染-->
+
+
+<script>
+	const users=ref([{name:'harry',isActive:true},{name:'ronn',isActive:false}]);
+	const activeUsers=computed(()=>{
+        return users.filter(user=>user.isActive)
+    })
+</script>
+
+<template>
+    <ul>
+		<li v-for="user in activeUsers">
+            {{user.value.name}}
+		</li>    
+	</ul>
+</template>
+
+<!--or-->
+
+
+<template>
+	<ul>
+        <template v-for="user in users">
+            <li v-if="user.isActive">
+                {{user.name}}
+    		</li>
+		</template>
+    </ul>
+</template>
+```
+
+v-for包裹的块中，可以完整的访问父作用域中的属性与变量。第二个参数index代表数组的下标
+
+v-for同样可以进行嵌套，始终理解v-for块中可以访问所有父作用域的属性与变量。
+
+**v-for同样可以遍历普通对象的属性，遍历顺序由Object.keys()返回值决定；for (value,key,index) 的三个参数分别代表值，属性名，属性下标**
+
+v-for并不是必须用在ul中的，它代表有v-for的标签需要‘循环’创造n次，这刚好符合列表ul的特性，所以我们常常搭配一起使用。事实上任何标签都可以单独加上v-for并循环创建多个实例。
+
+in可以搭配整数使用，但是此时i的起始值是1而不是0。	
+
+**key的使用**：
+
+当v-for的数据内项的顺序发生改变，默认行为下dom树的顺序不会发生改变，而是采取一种“就地更新”的策略来提高性能。但是对于**列表渲染结果依赖于 组件状态或者临时dom状态**的情况，这种策略无法满足我们的需要。所以要引入key来唯一标识一个dom节点，以便进行重排序或者重用。
+
+key是vue的虚拟dom上的一个属性，应该使用基础类型如number或string，不要使用对象。
+
+key必须是唯一的，不可以重复；key的顺序发生变化，dom树的顺序就会发生变化；key被删除时对应的dom节点也会被删除
+
+key还有一个巧妙的用法，用于强制替换一个元素/组件（因为key变化时dom节点就是新的，如果只有一个节点那就是全新节点）
+
+```vue
+const text=ref('content')
+<span :key="text">{{text}}</span>
+```
+
+有些情况下这很有用：
+
+1，强制触发组件生命周期hook函数，因为是新创建的所以会重新走一遍生命周期；
+
+2，触发transition
+
+**数组替换**：
+
+需要注意filter，concat等部分方法不会改变原始数组，会返回一个全新的数组，如果要使用这些新数据源要手动替换该结果。
+
+此时就符合数组顺序改变的情况，默认策略的高效性就体现了出来，如果丢弃原有dom再全部重新渲染，消耗就太大了。
+
+**如果需要使用计算属性或函数来将源数据过滤/处理成目标结果，始终注意不要在这些方法内使用sort，reverse方法改变原数组顺序与内容，请使用副本**
+
+**组件上的v-for**:
+
+使用无特殊差异，但是不会自动向组件中注入 项，需要手动向组件传递prop
+
+```vue
+<MyComponent v-for="(item,index) in items"
+             :name="item.name"
+             :key="item.id"
+             @remove="items.splice(index,1)">
+</MyComponent>
+
+
+<!--MyComponent的定义-->
+<script setup>
+    defineProps(['name'])
+    defineEmits(['remove'])
+</script>
+<template>
+	<li>
+        {{name}}
+        <button @click="$emit('remove')">
+    	</button>
+    </li>
+</template>
+```
+
+我们可以在组件中’定义‘属性，这样组件在被使用时传递属性就与外界数据源解耦了，否则自动注入item组件直接依赖外部数据，根本就没法复用。注意函数的定义用的是emit，绑定使用$emit;属性的定义用的是prop
+
+
+
+
+
+-------------------------------------
+
 ## vue ref和element plus节点
 
 1，ref的用法是没问题的，无论是语法糖setup还是export default方式都是ok的。vue2使用$refs的方式，vue3中也能兼容；vue3更推荐使用const elid=ref(null)的方式，不过要注意如果是export的方式得在setup中return这些refs
