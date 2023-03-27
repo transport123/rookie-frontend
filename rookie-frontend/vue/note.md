@@ -314,6 +314,122 @@ const text=ref('content')
 
 我们可以在组件中’定义‘属性，这样组件在被使用时传递属性就与外界数据源解耦了，否则自动注入item组件直接依赖外部数据，根本就没法复用。注意函数的定义用的是emit，绑定使用$emit;属性的定义用的是prop
 
+## 事件处理
+
+**内联事件处理器**:
+
+```vue
+<button @click="count++; count*=2;Math.abs(count)">内联事件处理</button>
+<p>{{count}}</p>
+```
+
+内联处理器中也可以写多个语句，但是这里相当于多句表达式，所以很多全局对象访问不到，例如console.log就无法执行，而Math，Date则可以访问到。
+
+
+
+**方法处理器**:
+
+定义函数时，可将event作为参数传入，并在函数体中利用event访问对应的dom对象
+
+```js
+function greet(event){
+    alert(`hello ${greeting.value}`)
+    if(event)
+    console.log(event.target)
+}
+```
+
+
+
+内联处理器中支持调用函数，所以传参在这里就显得非常方便
+
+```vue
+<script>
+	function saysth(msg)
+	{
+	}
+    //注意event始终放在最后一个参数
+	function warn(msg,event)
+    {
+        console.log(event.target.tagName)
+    }
+    
+</script>
+
+<template>
+	<button @click="saysth('hello')"></button>
+	<button @click="warn('warning',$event)"></button>
+    <button @click="(event)=>{warn('warning',event)}"></button>
+   	<!--通过$event或者箭头函数在内联处理器中传递dom中的原生事件-->
+</template>
+    
+```
+
+### 事件修饰符
+
+stop:停止冒泡；prevent:阻止默认行为；self:只有事件是自身触发时才处理；
+
+可以只有修饰符，而不设置方法，这样就只将事件的限制加了上去
+
+```vue
+<form action="http://baidu.com" method="get" @submit.prevent>
+            <input type="submit" value="提交"/> 
+</form>
+<!--此时点击提交什么也不会发生，因为默认行为被阻止了-->
+```
+
+修饰符可以链式调用，但是它们的顺序对结果是有影响的：
+
+@click.prevent.self: 阻止所有点击事件的默认行为，包括子元素冒泡上来的
+
+@click.self.prevent:只阻止自身的点击事件的默认行为，子元素冒泡上来的则不会阻止
+
+addEventListener对应的事件：
+
+capture：在捕获阶段触发事件，而非冒泡阶段;
+
+once：事件最多只触发一次;
+
+passive：事件的默认行为立即执行
+
+注意passive是 申明使用默认行为，与prevent是其实是互斥的，所以不要放在一起使用
+
+**按键修饰符**：
+
+```vue
+<input @keyup.enter="submit">
+<!--当按下回车抬起时触发事件
+vue的按键别名：
+.enter
+.tab
+.delete (捕获“Delete”和“Backspace”两个按键)
+.esc
+.space
+.up
+.down
+.left
+.right
+-->
+
+<!--系统按键修饰符:shift ctrl alt -->
+<input @keyup.alt.enter="trigger"> 
+<!--按下alt+回车才会触发-->
+<button @click.ctrl="foo">
+    按住ctrl再点击才会触发foo
+</button>
+<!--exact表示完全符合条件才会触发，上述情况是一个超集，只要按下了规定的键，即使按了别的键也仍会触发-->
+
+<button @click.ctrl.exact="exactfoo">
+    仅当按住ctrl再点击才会触发exactfoo
+</button>
+
+<button @click.right="rightfoo">
+    点击鼠标右键触发事件;left right middle
+</button>
+```
+
+
+
 
 
 
