@@ -681,8 +681,6 @@ aFetch();//由于申明了函数为异步，它并不会阻塞主线程
 //async函数返回的对象一定是promise对象，不管你的return语句写了什么
 ```
 
-**这几部分对我来说相当难懂，想要搞清楚它的原理需要花费大量的功夫，只能暂缓**
-
 #### Promise术语
 
 何为resolve，Promise C是怎样才会依赖于Promise B
@@ -711,9 +709,51 @@ then(callback){
 
 3，thenable中used不是针对promise对象的，而是实现了then的对象，需要保证这些对象在实现then时是规范的，内部不可以重复调用相关的resolve和reject。需要着重理解used这个东西是怎么访问的 这是js比较‘神奇’的一点，即使是函数执行完了，其中定义的变量也并不是一定会销毁
 
+#### 关于状态转换的思考
+
+1，new出的Promise不能直接resolve一个promise，因为x=onFullfilled(val)，假设此时的val是一个promise，那么传递给then的入参就是一个promise了，并没有通过resolvePromise的解包环节。解包是resolvePromise(x)触发的行为，且会一直解包下去直到返回值不再是thenable。解包的核心原理就是将返回的promise对象通过then来推入回调，在回调中利用scope的特性使用外层的resolvePromise继续解包，当不再thenable时，调用外层的handleresolve，也就真正的resolve了这个最终值。这个过程中生成了很多 临时的promise，它们对用户不可见，且不影响最终结果。
+
+如下面这个例子，resolve(1)触发后返回了innerPromise，开始第一次解包，调用innerPromise.then((val)=>{resolvePromise(val)})，此时val即innestPromise，注意在这个状态下innerPromise实际上已经解决了，因为它都已经调用resolve函数了，而很明显我们的timeOutTask是还没有解决的，这里和
+
+如果then中的回调函数返回一个未定状态（pending）的Promise，那么then返回Promise的状态也是未定的，并且它的终态与那个Promise的终态相同；同时，它变为终态时调用的回调函数参数与那个Promise变为终态时的回调函数的参数是相同的。
+
+的说法相悖，但是或许是因为内部直接resolve了一个promise有关。。
 
 
-todo:promise流程已经看懂，存留疑问1 ，x被解决并不能使外层的then也被解决，除非x中的resolve(y) y是非thenable，否则外层then依旧是pending状态，并且依赖于此y的终态；所以x或者x.then这种中间promise是否被解决，似乎不那么严谨，因为x.then最终也执行了resolvePromise(null)，它也被解决了；2，静态函数还不够清晰，需要重看两遍 all函数没有正确实现，需要查阅另一版的代码 3，微任务的具体实现是否真的有必要，如果有必要那它的正确行为是什么，和宏任务相比执行顺序是怎样，（不管实现细节）如何在业务开发中意识到哪些操作是异步的（这才是保证异步顺序正确的关键，这些规范并不能完全帮到我们）4，async和await的实现原理
+
+x被解决并不能使外层的then也被解决，除非x中的resolve(y) y是非thenable，否则外层then依旧是pending状态，并且依赖于此y的终态；所以x或者x.then这种中间promise是否被解决，似乎不那么严谨，因为x.then最终也执行了resolvePromise(null)，它也被解决了；
+
+```js
+let timeOutTask =new Promise((resolve,reject)=>{
+    setTimeout(()=>resolve(1),5000)
+}).then((val)=>{
+    let innerPromise = new Promise((resolve,reject)=>{
+        let innestPromise = new Promise((resolvein)=>{
+            setTimeout(()=>resolvein(15),5000)
+        })
+        resolve(innestPromise)
+        console.log(val)
+    })
+    return innerPromise;
+}).then((val)=>{
+    console.log(val)
+})
+
+```
+
+
+
+#### Promise静态函数
+
+静态函数还不够清晰，需要重看两遍 all函数没有正确实现，需要查阅另一版的代码 
+
+
+
+todo:
+
+微任务的具体实现是否真的有必要，如果有必要那它的正确行为是什么，和宏任务相比执行顺序是怎样，（不管实现细节）如何在业务开发中意识到哪些操作是异步的（这才是保证异步顺序正确的关键，这些规范并不能完全帮到我们）
+
+async和await的实现原理
 
 ### 返回值
 

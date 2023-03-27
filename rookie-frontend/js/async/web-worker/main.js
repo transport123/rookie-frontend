@@ -20,3 +20,49 @@ document.querySelector('#reload').addEventListener('click', () => {
   document.querySelector('#user-input').value = 'Try typing in here immediately after pressing "Generate primes"';
   document.location.reload();
 });
+
+
+function then(onFulfilled, onRejected) {
+  return new Promise((resolve, reject) => {
+      const onResolvedFunc = function (val) {
+          const cb = function () {
+              try {
+                  if (typeof onFulfilled !== 'function') { // 如果成功了，它不是个函数，意味着不能处理，则把当前Promise的状态继续向后传递
+                      resolve(val);
+                      return;
+                  }
+                  const x = onFulfilled(val);
+                  resolve(x);
+              } catch (e) {
+                  reject(e);
+              }
+          };
+          setTimeout(cb, 0);
+      };
+
+      const onRejectedFunc = function (err) {
+          const cb = function () {
+              try {
+                  if (typeof onRejected !== 'function') { // 如果失败了，它不是个函数，意味着不能处理，则把当前Promise的状态继续向后传递
+                      reject(err);
+                      return;
+                  }
+                  const x = onRejected(err);
+                  resolve(x); //处理了失败，则意味着要返回的新的promise状态是成功的
+              } catch (e) {
+                  reject(e);
+              }
+          };
+          setTimeout(cb, 0);
+      };
+
+      if (this.status === PENDING) {
+          this.onFulfilledList.push(onResolvedFunc);
+          this.onRejectedList.push(onRejectedFunc);
+      } else if (this.status === FULFILLED) {
+          //todo
+      } else {
+          //todo
+      }
+  });
+}
