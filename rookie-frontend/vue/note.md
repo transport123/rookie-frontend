@@ -460,7 +460,23 @@ true-value与false-value虽然可以配合单个checkbox来设置是否选中时
 
 .lazy:将同步更新放在change事件而不是input事件；.number将输入自动转换为数字(number类型而不是字符串)，当无法转换时则使用原始值 例如11aaa的字符串会始终parse为11这个number；.trim自动去除输入中的前后空格
 
+## 生命周期
 
+生命周期API:https://cn.vuejs.org/api/composition-api-lifecycle.html#onbeforeupdate
+
+![](demo1/lifecycle.png)
+
+现阶段对Vue的生命周期只能有一个概览，一方面不知道每个阶段具体做了什么（涉及到vue的原理，机制），一方面没有实际的落地用处，所以不太能深刻理解钩子函数的作用。但是能总结一些较为简单的准则
+
+1，mount之前的阶段create似乎不太需要关注，api中并没有暴露该阶段的钩子函数；
+
+2，onmounted代表在组件渲染并创建dom节点后的时机，调用该钩子函数时，相当于将一个callback注册进了组件实例，所以我们必须同步调用而不可以使用settimeout，否则会出现  组件挂载完成但是由于没有注册callback所以mounted阶段也无法触发钩子函数 的情况
+
+3，任意dom的更新都会触发onUpdated，尽量避免在其中做更新dom的操作，这样可能陷入无限更新的bug中；某些情况下可能需要使用nextTick才能正确访问更新后的dom（有点不理解）
+
+4，其余常用钩子为onMounted以及各阶段的before函数
+
+5，onErrorCaptured会在捕获了后代组件的错误时调用，默认情况下会一直向上传递到app.config.errorHandler;当在其中返回false时表示该错误已被处理，不再继续向上传递；在函数中可以根据错误情况将组件状态设置为一个预先定义的“错误状态”，但要注意不能因为此更新造成新的错误，否则又将陷入无限捕获错误的bug；如果在函数中抛出一个错误，将被发送到errorHandler。
 
 ## vue ref和element plus节点
 
