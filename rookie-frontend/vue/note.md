@@ -610,6 +610,10 @@ vue中的元素可以使用ref这个特殊属性，当定义一个和属性值�
 
 当子组件使用了<script setup>，这表示组件内容为私有，父组件就无法再直接访问其中的属性。需要通过defineExpose将需要的属性暴露出去，此时childRef就={a:value,b:value} 该过程仍会自动解包
 
+## 组件基础
+
+
+
 ## vue ref和element plus节点
 
 1，ref的用法是没问题的，无论是语法糖setup还是export default方式都是ok的。vue2使用$refs的方式，vue3中也能兼容；vue3更推荐使用const elid=ref(null)的方式，不过要注意如果是export的方式得在setup中return这些refs
