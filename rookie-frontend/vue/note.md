@@ -478,6 +478,68 @@ true-value与false-value虽然可以配合单个checkbox来设置是否选中时
 
 5，onErrorCaptured会在捕获了后代组件的错误时调用，默认情况下会一直向上传递到app.config.errorHandler;当在其中返回false时表示该错误已被处理，不再继续向上传递；在函数中可以根据错误情况将组件状态设置为一个预先定义的“错误状态”，但要注意不能因为此更新造成新的错误，否则又将陷入无限捕获错误的bug；如果在函数中抛出一个错误，将被发送到errorHandler。
 
+## watch监听
+
+```vue
+<script>
+    const objNum=ref({count:0})
+    watch(objNum.value.count,(val)=>{
+    console.log(`obj${objNum.value.count}`)
+})//非法watch，因为A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types
+</script>
+
+```
+
+1，当watch简单类型的ref时，发生改变oldvalue与newvalue分别代表旧值与新值，由于是基础数据类型，所以很容易对值进行副本存储，才能分别访问到前后不同的值；
+
+2，当类型为对象类型时，watch的应该是该reactive对象而不是ref；且直接传入reactive对象时，是深层次的监听，意味着对象的任意属性改变都会触发watch函数，如果是一个属性较多的大对象这对性能有不少的损耗，所以需要慎用；
+
+***tips:所以使用ref({})时应该watch ref.value，因为value代表着reactive对象实体，且由于对象属性改变，但是对象本身不变，所以oldvalue与newvalue其实是同一对象，其中的属性自然也就完全相同；假如此时watch ref本身，那么只有在完全替换value时才会触发对应的监听函数；并且当替换value后，之前watch该reactive value的链就断掉了，之后更新value属性将不会触发其监听函数***
+
+3，更推荐通过getter函数来返回对象的某一个属性值，仅监听该属性而不是整个对象
+
+由上述tip所知，当getter函数返回一个对象时，仅当该对象被替换时才会触发此监听函数；可以通过申明为{deep true}改为深层监听。
+
+watch默认是懒加载，只在数据源发生改变时触发；{immediate:true}可以在最初阶段直接执行一次监听函数
+
+**watchEffect**：
+
+简化了我们在使用异步调用时的编写方式，可以省去immediate，且会在回调中自动追踪同步代码（第一个await之前）中的响应式对象或属性，不用再一个个去watch。
+
+总结：watch更加精确的监控对应的属性，且监控的时机也由我们掌控，但是对于多个属性如果想避免深层监控可能需要编写较多的watch体；watcheffect使用起来较为方便，会在回调中自动追踪访问的响应式对象属性，但是监控时机不太可控，且默认会直接调用一次。
+
+**回调时机:**
+
+默认的watch回调时机是在dom树更新之前，想要访问dom树更新之后的状态需要传入{flush:'post'}对象；
+
+watchPostEffect有着完全相同的功能
+
+一般来说我们不需要显式的去停止一个监听，如果需要的话手动调用watch或watchEffect返回的函数即可
+
+```vue
+<script>
+const unwatch=watchEffect(()=>{})
+unwatch()//即可停止watch
+</script>
+```
+
+在创建watch时务必使用同步方法创建，异步的方式会造成内存泄漏，且不会监听成功；
+
+如果需要等待一些异步数据，你可以使用条件式的侦听逻辑：
+
+```js
+// 需要异步请求得到的数据
+const data = ref(null)
+
+watchEffect(() => {
+  if (data.value) {
+    // 数据加载后执行某些操作...
+  }
+})
+```
+
+
+
 ## vue ref和element plus节点
 
 1，ref的用法是没问题的，无论是语法糖setup还是export default方式都是ok的。vue2使用$refs的方式，vue3中也能兼容；vue3更推荐使用const elid=ref(null)的方式，不过要注意如果是export的方式得在setup中return这些refs
