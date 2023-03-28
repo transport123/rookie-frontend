@@ -411,7 +411,7 @@ vue的按键别名：
 .right
 -->
 
-<!--系统按键修饰符:shift ctrl alt -->
+<!--系统按键修饰符:shift ctrl alt 此类事件需要获取焦点才能触发-->
 <input @keyup.alt.enter="trigger"> 
 <!--按下alt+回车才会触发-->
 <button @click.ctrl="foo">
@@ -428,13 +428,39 @@ vue的按键别名：
 </button>
 ```
 
+## 表单输入绑定
+
+1，v-model绑定时，输入控件的默认值会忽视其本身value属性，所以务必使用响应式api去进行默认值的初始化；
+
+2，text，textarea绑定value并侦听input事件；radio，checkbox绑定checked property并侦听change事件；select绑定value并侦听change事件
+
+**checkbox使用：**
+
+1，单个checkbox，不设置value，使用bool类型的v-model绑定，代表其是否被选择；
+
+2，多个checkbox，每一个都需要有value，使用数组类型的v-model，选中的box会将value推入数组中
+
+***tips：原生html中checkbox与radio是通过name属性被划分到一组的，vue中不需要设置name，使用v-model进行分组***
+
+radio需要设置value，使用字符串类型的v-model，选中的radio会将绑定的model值设为其value
+
+radio不能像checkbox一样使用单个来代表是否被选中，行为比较诡异，值变成了on
+
+select单选时，假如初始状态无默认选中值，在ios上会导致第一项无法选择，所以用一个disable的option来占位第一项解决该问题
+
+option被选中时，如果option的value没有赋值，其内容就会被当作value赋给对应的v-model；
+
+多选时要使用multiple属性，选中的option会将值推入对应的v-model数组
+
+**为了能将选中的value类型拓展为bool 字符串以外的类型，要将v-model与:value配合使用，通过设置:value的响应式变量来使得选中时的value为对应的对象**
+
+true-value与false-value虽然可以配合单个checkbox来设置是否选中时的value，但这两个attr本身无法影响checkbox的value，如果默认初始值未设置，此时的value依然是空而并不是false-value的值，所以并不推荐这种使用方式。更推荐使用radio单选来完成类似的功能。
+
+**修饰符**:
+
+.lazy:将同步更新放在change事件而不是input事件；.number将输入自动转换为数字(number类型而不是字符串)，当无法转换时则使用原始值 例如11aaa的字符串会始终parse为11这个number；.trim自动去除输入中的前后空格
 
 
-
-
-
-
--------------------------------------
 
 ## vue ref和element plus节点
 
