@@ -538,7 +538,77 @@ watchEffect(() => {
 })
 ```
 
+## 模板引用
 
+vue中的元素可以使用ref这个特殊属性，当定义一个和属性值同名的ref变量时，vue挂载后会将该元素在dom中的实例赋给ref的value，以便我们能够直接的操作dom树。
+
+***一定要注意只有在挂载完成后ref的value才与对应的dom节点绑定，在这之前value始终为null***
+
+```vue
+<script>
+    const divref=ref(null)
+    const divif=ref(true)
+	//在使用watch/watcheffect时需要注意null的边界情况
+    watchEffect(()=>{
+        if(divref.value){
+            
+        }else{
+            //value为null时我们也要catch到，因为watcheffect是会直接调用一次，这发生在mount之前，此时的value必然是null；
+            //且通过v-if将元素卸载后也会触发函数，且值也为null
+        }
+    })
+</script>
+
+<template>
+	<div ref="divref" v-if="divif">
+    </div>
+</template>
+```
+
+在将v-for与模板引用一起使用时，需要注意两点：
+
+1，refs申明为一个数组，其value是一个数组对象的代理，如果想遍历该数组使用iterator不可行，需要通过下标与length去遍历；
+
+2，refs数组内的dom顺序和数据源list的顺序不一定相同（应该是和v-for的就地更新策略有关，如果设置了key属性是否会保持一致？）
+
+***函数模板的描述是组件更新会触发该函数，这里的组件更新并不是指响应式数据变更引起的组件更新。函数模板 :ref 更像是一种动态绑定的方式，通过el将dom节点赋值给ref或者对象属性***
+
+**在子组件上使用模板引用**：
+
+```vue
+<!--childComponent 定义-->
+<script setup>
+    defineProps(['name'])
+    defineEmits(['remove'])
+    const a =10
+    const bref=ref('b')
+    
+    defineExpose({
+        a,b
+    })
+</script>
+<template>
+	<li>
+        {{name}}
+        <button @click="$emit('remove')">
+    	</button>
+    </li>
+</template>
+
+<!--使用childComponent-->
+<script setup>
+	const childRef = ref(null)
+</script>
+<template>
+	<childComponent ref="childRef">
+    </childComponent>
+</template>
+
+```
+
+如果子组件是使用的选项式api或者没有使用<script setup>，此时的childRef就和子组件本身的this一样，我们可以通过childRef访问子组件的所有属性和方法，虽然这看起来很简便，但是仍然不推荐这么做，会使得父子组件高度耦合，应该始终通过define的prop和emit来进行父子组件之间的数据交互。
+
+当子组件使用了<script setup>，这表示组件内容为私有，父组件就无法再直接访问其中的属性。需要通过defineExpose将需要的属性暴露出去，此时childRef就={a:value,b:value} 该过程仍会自动解包
 
 ## vue ref和element plus节点
 
