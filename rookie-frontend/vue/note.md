@@ -612,6 +612,76 @@ vue中的元素可以使用ref这个特殊属性，当定义一个和属性值�
 
 ## 组件基础
 
+**组件的定义**:
+
+1，在使用构建步骤时，一般用单个vue文件定义组件（sfc），在使用时需要import；
+
+2，不使用构建步骤也可以在一个js中定义组件，并通过export导出；其中的模板使用template属性+字符串定义，字符串可以是完整的html标签或者是引用的页面内标签id；如果是默认导出就是该文件名的组件，也可以使用 具名导出 在一个文件内导出多个组件
+
+**组件的使用**:
+
+每个组件实例内的变量都是相互独立的；
+
+不确定：默认情况下函数是共享的（或许是定义在了原型中），因为debounce函数那里说过带状态的函数，组件之间默认共享会造成混乱，所以在每次created时都调用debounce创建一个单独的防抖函数实例。
+
+当直接在原生html中想要使用组件标签时，必须使用kebab-case的写法，且需要显示的去关闭标签。同时对于元素位置有限制的标签，需要先使用原生的标签，并将其is属性设置为"vue:mycomponent"才可以正确使用。
+
+**定义属性与事件**:
+
+```vue
+语法糖：
+<script setup>const props = defineProps(['attr'])
+//defineProps是<script setup>中可用的编译宏命令，不需要显式的导入；其入参数组中可以定义多个属性；
+//该命令会返回一个包含所有属性的props对象
+console.log(props.attr)
+
+//1,需要在子组件中定义一个事件
+const emit = defineEmits(['btn-enlarge'])//emit就和模板中的$emit一致，是一个返回的函数；此处无法访问$emit，所以如果要抛出事件需要用这种方法 emit('btn-enlarge')
+
+//2,需要在子组件中抛出该事件
+<button @click="$emits('btn-enlarge')"/> 
+//3,在外层接收事件并处理
+<chilidcomponent @btn-enlarge="size++"/>
+</script>
+
+不用语法糖:
+<script>
+export default{
+    props:['attr']
+    emits:['btn-enlarge']
+    setup(props,ctx){
+        ctx.emit('btn-enlarge')
+    }
+}
+
+</script>
+
+
+```
+
+***要注意在使用：attr传值时是一种响应式绑定，=后面的不再是实际值而是一个响应式对象，如果只是正常的赋值切记不要带上：否则不会将=后的内容解析成具体的值***
+
+可以通过<slot/>插槽来占位，向子组件中传递content内容
+
+```vue
+<script>
+const Tabs={
+    Tab1,
+    Tab2
+}
+const currentTab=ref('Tab1')
+</script>
+
+<template>
+
+<component :is="Tabs[currentTab]"></component>
+</template>
+```
+
+通过component标签和is属性来配置可插拔的组件，默认行为下未选中的组件会被直接卸载，通过keepalive可以将其保活。
+
+需要注意的一点，这里不能将 导入的组件本身（Tab1,Tab2） 申明为一个响应式对象，会对性能有很大的影响；正确的方式是通过响应式的下标去进行访问，当对象在定义时没有设置属性名时，默认属性名就是该变量名；可以通过Tabs[currentTab]访问到对应的组件，非常的巧妙。
+
 
 
 ## vue ref和element plus节点
