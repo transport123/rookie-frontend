@@ -58,7 +58,77 @@ npm包版本号规则：
 
 ## vue-cli构建项目
 
+### vue add
+
 vue add 是vue-cli提供的命令行接口，可以通过它来方便的安装插件。插件包含一个generator（用于创建文件）和运行时插件（调整webpack核心配置和命令注入），所以当add一个插件时会改变项目的目录结构，添加（默认生成）一些插件的默认配置文件。且插件是对“项目”的一种增强，譬如编译阶段的优化，提供项目测试工具，代码风格的支持等，而不是功能的扩展，它和依赖本质上的区别就在这里，也就是项目在真正运行时原则上是不需要这些插件的！所以当你add后这些插件的依赖选项都会被配置在devDependencies中，并在项目中生成一份插件对应的模板配置文件。其实这里的插件和之前peerDependencies所说的插件有一些相似，都是对某种功能的增强，所以其需要特定的插件环境。
 
 **插件最重要的一点就是需要 插入，类比到element-ui是vue的一个插件，我们必须手动调用vue.use(elmentui)才能在项目中正确的使用element-ui，这个挂载过程就是插件的插入。且插件开发过程中依赖运行环境也是很正常的，比如我们开发一个vue的ui插件，势必要import ref等一系列vue的功能才行，这和插件需要插入宿主环境中并不矛盾**
 
+### webpack
+
+vue-cli的打包实现还是使用的webpack，想要配置webpack模块需要在vue.config.js中自行添加。
+
+当然也可以直接使用webpack，但是这样我们的项目依赖和插件就要自己手动添加，web-pack，web-pack-server等；并且在运行npm run dev等脚本时，需要在package.json中自行编写webpack的script。
+
+## vite
+
+vite是一种“傻瓜式”的构建工具，所以文档看起来非常的“简陋”，因为默认情况下的构建几乎不需要修改任何东西。
+
+需求落地才能产生结果，光看这些文档是无法理解里面的配置到底能解决什么问题，譬如postcss，各种增强式plugin，这些前端项目中为了解决某个问题衍生出的solution并不是vite本身的知识，想要了解到这些东西只有实际开发+时间积累+主动拓宽视野。大致浏览了一些基本配置模板，项目整体结构，现阶段已经够用，等到实际要部署项目或者项目中有某些配置需求时再去查阅官方文档和对应的plugin等。以下为常用的vite模板配置：
+
+https://blog.csdn.net/weixin_45822171/article/details/127275984
+
+https://blog.csdn.net/m0_55357295/article/details/128322526
+
+https://juejin.cn/post/7147353734912147470
+
+
+
+### rollupOption
+
+vite“摒弃”了webpack这个较重的打包工具，内部使用rollup这种有较多插件的打包工具，需要什么插件可以自行配置。
+
+打包过程中原生的rollup配置使用rollupOption进行配置。
+
+external:第三方依赖不会被打包进bundle，使用cdn的形式引入（需要下载）
+
+
+
+### 常用API
+
+resolve.alias:路径别名。 注意：使用别名的路径不应该再使用相对路径，要使用绝对路径。
+
+在vue-cli中也可以在jsconfig.json中去配置path来达到相同的目的。
+
+```json
+import {defineConfig} from 'vite'
+import {URL,fileURLToPath} from 'node:url'
+import {join} from 'path'
+
+export default defineConfig({
+    resolve:{
+        alias:{
+            '@':fileURLToPath(new URL('./src',import.meta.url))//import.meta.url 是一个 ESM 的原生功能，会暴露当前模块的 URL
+        }
+    },//方式一
+    resolve:{
+        alias:{
+            '@':join(__dirname,'src')
+        }
+    }//方式二
+})
+```
+
+## Css方案
+
+### Pre-Processor
+
+css in js
+
+
+
+### Post-CSS
+
+postcss-import VS css import
+
+### Post-Processor
