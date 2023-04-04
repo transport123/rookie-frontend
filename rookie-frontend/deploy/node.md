@@ -117,18 +117,77 @@ export default defineConfig({
         }
     }//方式二
 })
+
+
+//jsconfig.json配置方式
+{
+    'compilerOptions':{
+        'baseUrl':'./',  //以当前目录作为项目根目录
+        'paths':{
+            '@':['src/'],
+            '@/*':['src/*'],  //---->@/a.js=./src/a.js
+        }
+    },
+    'include':['src/**/*.js'],//搜索时希望这些文件夹中的这类文件出现在搜索域中
+    'exclude':['node_modules']//不希望出现在搜索域中的内容
+}
+//jsconfig是个增强开发体验的配置文件，比如路径的简写，搜索目标的指定等。vite使用alias和meta.base来实现路径简写
 ```
 
 ## Css方案
 
+### Css in Js
+
+诞生原因：
+
+css文档级别，整体比较臃肿，动态变量支持不友好，选择器多了之后容易产生冲突。
+
+且前端项目打包时css是可以被打包进js文件的，也就是最终的包中只有js+html文件，css内容被“内联”进了js文件。
+
+根据这个特性就出现了直接用js“写”css的方案，因为是js的运行环境所以可以对css做到增强，可以方便的实现换肤等功能
+
+实现：vanilla-extract
+
+
+
 ### Pre-Processor
 
-css in js
+not-css to css
 
+将特有的语法如less，sass转换成css。这些语法也是为了弥补css本身的一些缺陷，使得开发更加高效。
 
+https://segmentfault.com/q/1010000002527156
 
 ### Post-CSS
 
-postcss-import VS css import
+post-css本身并不是一个post-processor，它只是一个transpiler，将css’翻译‘成一个AST(abstract syntax tree)抽象语法树，方便作为’插件‘的post-processor对css进行功能上的增强
+
+**postcss-import VS css import**
+
+css 原生的import是阻塞加载的，多个import必须顺序加载而不能异步同时加载，会对页面加载速度造成影响。
+
+原生link方式引入css可以异步同时加载，更加推荐。
+
+postcss的import是一种内联的方式，直接将外部css文件内容插入到本文件中或style标签中。但是这样也将单页文件体积变大，仍然会阻塞加载速度，相比之下不用多次请求css文件是它比原生import优秀的地方，且css文件内容本身体积并不大，所以对加载速度影响还是比较小的。应该还是要注意不要引入过多，过大的css文件。
 
 ### Post-Processor
+
+css to supercss 将原生css优化成最符合当前浏览器的css。
+
+https://www.hongkiat.com/blog/css-post-processors-tips-resources/
+
+pre和post的区分其实没有什么意义，本质都是对css的一种优化。更应该关注该领域中常用的主流方案应该怎么配合
+
+### Tailwind
+
+tailwind只是一个css的framework，它仅仅提供了一种css的方便写法。
+
+css有一种Atomic css的方案，即每一个.class{}中都只有一条属性语句，实际使用时在一个元素上会应用多个class
+
+tailwind简化了这个过程，使得我们可以直接在tailwind的className属性上写style语句。
+
+尽管这种方案可以复用+组合原子的class，但是实际开发中每个元素都要重写一遍所有的classname，这样难道不会造成冗余吗？
+
+tailwind官方提供了一些解决方案：https://tailwindcss.com/docs/reusing-styles
+
+其不鼓励“class”的真实复用，而是通过插件同时修改，循环展开，组件复用等方式间接的去解决这个问题
