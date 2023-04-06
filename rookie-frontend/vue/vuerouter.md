@@ -83,3 +83,22 @@ router-link会经过路由控制，所以默认无法跳转外部链接，会带
 开发环境中，a标签也可以使用vue-router的路由表，行为一切正常。
 
 生产环境中，必须通过slot将click事件设置为router-link的内部navigate方法，将跳转事件托管，否则会出现404等错误。
+
+## 两种history模式
+
+### 区分客户端路由与服务器路由
+
+首先，nginx在配置root，alias，location时是在配置服务器路由，即浏览器通过该url会返回哪个资源，通常来说就是我们的index.html，所以当我们不想使用根目录/访问时就必须配置正确的location如/foo；此时index文件成功返回，但是在加载时还需要其他的静态资源css+js，于是会使用http协议去请求这些资源，其url为origin+base+文件名，该值是在vite打包时就已经确定的，那么此时就出现了问题，默认的base为空，而此时在服务器上这些资源是配置在/foo/文件夹下的，那么就会报404的错误。最正确的做法就是将vite的base配置为/foo/即可，不过也可以为nginx多加一个根目录/的路径，让原请求通过根目录路径也能访问到这些资源。
+
+当服务器路由配置正确，此时我们成功加载完index与其需要的资源文件，剩下的任务则交给vue-router完成。vue-router是客户端路由，其工作机制是使routerview显式对应路径的组件。对于使用了vue-router的单页面应用而言，在点击router-link时浏览器不会真的向服务器重新发起请求，而是在客户端进行内部跳转（如果是懒加载的组件，由于静态url由vite的base配置好，只需要访问对应的静态资源后再初始化组件即可），并将浏览器中的url通过window的pushstate方法替换为vue-router中的path。
+
+### WebHistory
+
+当在浏览器中输入url访问时（刷新，后退也是一样的），第一步是根据服务器路由寻找要返回的文件，当访问一个非根目录路径的组件时，由于服务器上没有对应的资源，默认情况下会报404的错误。所以需要通过try_files配置，指明在当前的location访问中，所有找不到的资源都指向index.html，这样就能成功的返回该文件。且此时routerview显式的组件为浏览器中的path；且如果我们设置了webHistory的base值，其会在所有prefix不为该值的路由路径前面拼接上该base值。
+
+### WebHashHistory
+
+Hash#其实就是一种对url的截断，在使用浏览器输入url访问时会丢掉#开始的部分，即在服务器路由寻找资源时只关心其prefix。所以只要我们正确配置了nginx的location，就可以正常的访问多层级的组件，而无需配置try_files。WebHashHistory的base值在<head>中存在base标签时会被忽略，虽然我没有设置该标签，但是仍然不起作用，~~~我猜测是vite默认根据base值创建该标签，所以生产环境中其总是和vite的base值相同。~~我在尝试不配置vite的情况下设置该值，仍然没有任何作用。。
+
+根据测试在浏览器中使用hash#时，完整的url就是 服务器路由path+客户端路由path(客户端的base值不起作用)，实在无法复现其doc里所说的other-folder的情况，只有带#时才会使path变成/#/base；或许这样也是一种合理吧，因为我们需要保证服务器路由的path和#之前的path一致，所以随便设置的情况下它就失效了。
+
