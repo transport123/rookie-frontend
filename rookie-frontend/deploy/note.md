@@ -191,3 +191,13 @@ tailwind简化了这个过程，使得我们可以直接在tailwind的className�
 tailwind官方提供了一些解决方案：https://tailwindcss.com/docs/reusing-styles
 
 其不鼓励“class”的真实复用，而是通过插件同时修改，循环展开，组件复用等方式间接的去解决这个问题
+
+## Nginx部署
+
+1，当vue-router的历史模式在没有使用hash模式时，对于单页面应用，对应路径的html文件实际是不存在的，此时需要使用try_files来进行适配，它其实是一种”失败处理“的策略，在找不到对应文件时统一使用目标文件。注意try_files的格式要正确，空格也会影响配置结果（好像是，因为我多打了一些空格该配置完全就不生效）。而hash模式实际上并没有将url发送到服务器，所以服务器不用做其他配置
+
+2，root配置的最终路径为root+location的拼接，而不是简单的替换，所以想对访问路径设置别名会有一些麻烦；
+
+3，nginx提供了alias来设置路径别名，即location完全替换alias的完整路径。
+
+4，在生产环境中，当访问路径不是根目录/时，打包时对应的配置也需要发生改变。vite的base也要设置为对应的子路径或完整的url目录。但此时有一个nginx的bug，alias在配合try_files无法正常工作，只能切换为root进行配置
