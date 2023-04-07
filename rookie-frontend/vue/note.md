@@ -682,6 +682,67 @@ const currentTab=ref('Tab1')
 
 需要注意的一点，这里不能将 导入的组件本身（Tab1,Tab2） 申明为一个响应式对象，会对性能有很大的影响；正确的方式是通过响应式的下标去进行访问，当对象在定义时没有设置属性名时，默认属性名就是该变量名；可以通过Tabs[currentTab]访问到对应的组件，非常的巧妙。
 
+## Props注意事项
+
+### prop的单向数据流
+
+原则上，prop如果需要发生改变，那么更改它的操作应该是父组件发起的，而不是子组件本身。因为子组件对属性的更改会影响父组件的状态，使得状态管理会变得混乱，且这样会增加父子组件的耦合性。如果确实需要更改，更合理的做法是由子组件通过emit抛出一个事件，在父组件中接收后并作出相应的更改。
+
+如果子组件只是要对某个属性进行本地化保存或是根据一些规则展示，则通过变量拷贝+计算属性就可以实现这些功能，而不需要直接对prop进行更改。
+
+当传递一个对象/数组为prop时，尽管修改该prop对象的属性时不会抛出子组件修改prop的warning，但我们仍然需要避免这样做，理由和上述理由一致，且在vue中通过对象引用来更改属性值会对性能产生较大的损耗（不太理解为什么）
+
+### prop类型检查
+
+```vue
+<script setup>
+    defineProps({
+    //prop类型检查，只有对象定义的方式可以使用该特性
+    propA:[String,Number],//值可以为String或Number
+    propB:{
+        type:Number,
+        required:false,//该值为true时表示必须传递该prop，默认都是可选的
+        default:25//默认值为25
+    },
+    propC:{
+        type:Object,
+        default(rawProps){
+            return{
+                'attr':'attrValue'
+            }
+        }//当为Object时必须通过一个工厂返回默认构造值
+    },
+    propD:{
+        type:Function,
+        //该函数作为默认值
+        default(){
+            return 'default function'
+        }
+    },
+    propE:{
+        //自定义值检查器，赋值必须是这些值中的一个
+        //也可以自定义规则，该函数输入一个value，返回一个bool值表示value是否合法
+        validator(value){
+            return ['messy','haland'].includes(value)
+        }
+    },
+	person:{
+        type:Person,
+        default(rawProps){
+            return new Person('jessie','pinkman')
+        }
+    },
+    //boolean有特殊的使用方式，属性显式声明在标签中时不用赋值，默认为true，未声明时为false
+    disabled:{
+        type:Boolean
+    }
+})
+//需要注意defineprops内部是无法访问到script中定义的其他变量的，因为其在编译时会移到整个函数的外部
+</script>
+```
+
+
+
 
 
 ## vue ref和element plus节点
