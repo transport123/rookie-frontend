@@ -741,7 +741,9 @@ const currentTab=ref('Tab1')
 </script>
 ```
 
+## Emit
 
+见vuedemo/emits的sample代码
 
 
 
