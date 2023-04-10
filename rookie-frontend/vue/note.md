@@ -745,6 +745,33 @@ const currentTab=ref('Tab1')
 
 见vuedemo/emits的sample代码
 
+## vmodel attr穿透
+
+见vuedemo/vmodel与/attr下的sample代码 笔记记录在注释中
+
+## Slot
+
+
+
+### line-height的小插曲
+
+line-height的设置仅为可能的行高最小值，并不代表最终的行高，如果内部元素高度或者在baseline与对齐方式的计算规则下行高大于该值，最终的行高会根据具体情况决定
+
+```html
+<span style="line-height: 50px;">
+    <img style="width: 300px;height: 50px;background-color: red; vertical-align: middle;"/>
+</span>
+
+<!--vertical-align对元素本身起作用，而不是对子元素起作用。
+在未手动设置line-height且内容仅为文字时，行高由fontsize决定，且baseline的高度也会根据行高确定
+当手动设置line-height后，两行的baseline间距始终为line-height而不受fontsize影响;
+当根据fontsize计算的行高小于设定的行高时，baseline位置始终不变，单行高也一直为line-height;
+当计算的行高大于设定的line-height，而字符本身还未超过line-height时，会不断下移baseline，使得文字能放入原行高中，且行高不会变化
+当字符本身高度已经超过line-height，baseline始终为行底，行高也为字符本身高度，不再额外计算其他空间
+需要注意两行之间的baseline间距为line-height是inline-block或block元素的行为，而对于inline元素，由于换行等于产生新的元素，行高会再次单独计算，所以不会受到影响
+由于默认对齐方式为baseline，当未设置middle时，行高=最大元素高度+baseline高度，所以图片下部分总有一段空白，设置为middle或者bottom即可解决该问题-->
+```
+
 
 
 ## vue ref和element plus节点
