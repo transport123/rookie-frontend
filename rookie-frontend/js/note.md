@@ -952,6 +952,39 @@ import：
 
 默认采用严格模式
 
-
-
 两者在使用()时内容都必须为字面量，不可为变量。
+
+**该条总结非常简略且对于导出值变化的解释有纰漏。详细见deploy->静态资源处理的解释**
+
+## JS闭包函数变量访问
+
+考虑下面的代码：
+
+```js
+function out()
+    {
+		let x=0
+        function nest()
+        {
+            console.log('nest'+x)
+            x++
+            console.log('nest'+x)
+        }
+        function getx()
+        {
+            return x
+        }
+        return{
+            'x':x,
+            'nest':nest,
+            'getx':getx
+        }
+    }
+let{x,nest,getx}=out()
+console.log('script'+x)//0
+nest()//0 1
+nest()//1 2
+console.log('get'+getx())//2
+```
+
+out函数返回了nest,getx等函数，当在out域外调用这些函数时，x的值依然像在out域内访问一样同步更新，而并不是我想的x此时会变为一个undefined。这或许是JS的特性，x的地址通过外部函数引用链nest--->x始终存在，所以x并没有被销毁。暂时先记住这种特性

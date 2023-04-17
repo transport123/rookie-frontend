@@ -192,6 +192,203 @@ tailwind官方提供了一些解决方案：https://tailwindcss.com/docs/reusing
 
 其不鼓励“class”的真实复用，而是通过插件同时修改，循环展开，组件复用等方式间接的去解决这个问题
 
+## 静态资源路径处理
+
+问题来源：在使用vue-cli/webpack进行打包时，图片、媒体等静态资源在引入时需要使用require才能在生产环境中获得正确的资源路径
+
+### require历史演化
+
+1，当多个外部JS文件被引入时，很容易产生变量重名的冲突，最初使用命名空间来解决问题
+
+```js
+<script src='./a.js'></script>
+<script src='./b.js'></script>
+
+//a.js
+let app.a={}
+app.a.name='a'
+
+//b.js
+let app.b={}
+app.b.name='b'
+
+```
+
+显而易见，当我们按照a,b的引入顺序时，我们可以在b模块中访问app.a的各种变量，且由于命名空间a,b的存在，不会造成混乱，这似乎很符合我们的要求；然而我们可以在b中修改a中的变量，这显然不是模块a所希望的行为；
+
+2，使用函数闭包与scope来解决模块之间的修改问题，使得模块之间只能get值而不能修改值
+
+```js
+//a.js
+let app.a=(function()
+{
+    let name = 'a'
+    let age = 24
+    return{
+        getName:function()
+        {
+            return name;
+        }
+    }
+    
+})()
+```
+
+此时我们可以通过app.a.getName来获取name值，却不能改变name值；注意此时app.a的写法，先定义了一个匿名函数，随后直接调用该匿名函数，app.a为该匿名函数的返回值。不过该方案仍然无法解决顺序加载的问题，a模块始终无法访问在它后面加载的模块。且我认为这种方法还有其他的弊端，由于模块定义利用了函数，假设此时我确实想动态更改name值要怎么办，或者说该模块有一个count值想要记录某个函数调用次数，这些实现起来似乎都非常的困难
+
+3，模块的概念被正式引用，每一个文件为一个模块，其中内部的变量均为私有，只有模块自身可以访问。不同的规范有不同的实现方式，CommonJs规定模块内部有require和module这两个变量可以使用，require则就用来加载模块。其中module代表当前模块，包含了模块信息。exports是module的一个属性，代表当前模块要导出的变量或者接口。require获取到的值就是一个模块exports的值。且为了方便，CommonJs直接提供了exports变量，我们可以直接使用exports.name=name而不需要module.exports.name=name。
+
+require会缓存模块，当在一个文件中require两次同一个模块时，第二次require返回的即第一次require后的值，不会再重新加载。
+
+**require是拷贝，而不是返回原exports对象**
+
+```js
+//a.js
+let name = 'a'
+let age =10
+exports.name=name
+exports.setName=function(sname)
+{
+    name = sname
+}
+
+//other module
+let a=require(./a.js)
+//该语句类似于
+let a={}
+a.name=exports.name//a.name并不指向exports.name
+a.setName=exports.setName//函数的拷贝似乎没有什么意义，其执行内容都是一样的
+//所以setName更改的还是模块a本身的name值，而我们的a变量的name是没有被改变的
+//且由于缓存机制，无论require多少次返回的都是同一个a变量
+console.log(a.name)//打印为a
+a.setName('tob')//此时改变的是模块a的name值
+let aa=require(./a.js)//再次require
+console.log(a.name)//此时打印仍为a
+//个人的一些思考：由于对象和基础类型值的区别,exports的行为也会有区别。例如该例中name和age都为基础类型，那么exports.name在赋值时本身就进行了一次拷贝，如果接下来再改变name值，exports.name也并不会同步更新，不过这似乎没什么影响，因为require的缓存+拷贝机制，一旦我们引入一次之后，接下来require的都是该缓存值，其本身也不会改变。这也能阐释一些模块设计的原则，外界不要改变模块内的变量值，内部改变仅为模块自身可见，只为外部提供方法。
+//如果我们想始终获取模块最新值，定义函数或许是一种好方法
+exports.getName=function()
+{
+    return name;
+}
+//个人觉得这样是可行的，尽管存在拷贝机制，但是函数的执行内容不会发生改变，name始终都是模块a本身的变量地址，但由于是函数返回值我们不可改变它，完美的符号我们的需求。或许我们应该少直接导出值，除非是一些与模块a本身不再有关联的值，因为获取到该值后仅仅相当于一种字面量的初始化，外部拿到之后需要自己做自定义操作。
+```
+
+值得注意的是require是一个同步运行的方法，这在后端中没有什么问题，但在前端中由于js等资源都需要网络连接去访问，这会非常影响页面加载速度，所以在后续也推出了异步的require方案，如require.js等；es6也推出了import等类似的机制来实现模块化。script原生标签的加载本身也存在这个问题，其使用async或者defer来进行解决
+
+### MOCK require in Browser
+
+根据上面的介绍，对于浏览器的运行环境是不支持require的，所以webpack等在打包时会将其转化为浏览器可运行的代码，下面是如何模块的方法
+
+```js
+(function(modules){
+    //缓存已加载模块
+    let installedModules={}
+    
+    let require = function(moduleName)
+    {
+        //缓存中已经加载，直接返回即可
+        if(installedModules[moduleName])
+            {
+                return installedModules[moduleName].exports
+            }
+        //未加载就需要加载
+        let installedModules[moduleName]={
+            modulename:moduleName,
+            export:{}
+        }
+        let module = installedModules[moduleName]
+        //这一步最为关键
+        //提供了module和require两个变量供模块来使用,module用来存放该模块的信息
+        //require函数则用来创建/缓存需要引入的模块
+        modules[moduleName].call(module,module.exports,require)
+        return module.exports
+    }
+    require('index.js')
+})(
+    {
+        'a.js':function(module,exports,require){
+         	//a.js的内容   
+            exports.name='a'
+            exports.age=15
+        },
+        'b.js':function(module,exports,require){
+            //b.js的内容
+            exports.name='b'
+            exports.age=20
+            
+        },
+        'index.js':function(module,exports,require){
+            //index
+           let a = require('./a.js')
+           let b = require('./b.js')
+        }
+    }
+)
+//注意这里匿名函数直接调用的写法，别被绕晕了！
+```
+
+#### 拷贝机制update
+
+在模拟require的实现方式时，发现对于exports的处理实际上就是传入exports对象，并直接通过exports.attr进行属性赋值。所以拷贝就是一种浅拷贝，即基础类型为值的拷贝，对象类型为引用赋值，所以基础类型的改变不会被影响，而对象类型的改变会影响到exports后的值。Js中，对于一个定义在函数中的变量x，如果该函数返回一个访问该变量的闭包函数，我们在函数外调用闭包函数也依旧能访问到该变量x的原始值，这个特性很重要，我认为是因为function是一种对象类型所导致的，返回闭包函数使得外部持有该函数的引用，而x的地址由于被该闭包函数访问所以不会销毁。
+
+默认的import也是浅拷贝；但是当使用import {name,age} from 'a.js'时，name age无论是基础类型还是对象类型，都始终会和模块内的值始终保持一致。
+
+缓存机制是真实存在的。
+
+一些参考：
+
+https://juejin.cn/post/6844903957752463374
+
+https://zhuanlan.zhihu.com/p/113009496
+
+### require在打包过程中的机制
+
+由于在打包过程中，静态资源（如图片，媒体，字体文件）会进行‘编译’，资源名称和位置会发生改变，如./asset/a.png在打包完成后，真实的图片可能就变成了/img/a.avxc67c.png，所以在编译过程中需要一种机制将src的值也替换为该值。
+
+默认情况下，使用静态路径赋值src='./img.png' 会自动转换为 src=require('./img.png')，webpack在遇到src，url()，@import时会自动开启require的特性 
+
+而:src='path' 动态绑定时，此时的path为一个变量，编译时无法预处理，所以需要显式的加上require(path)
+
+上面介绍过require是一种模块引入的机制，在webpack中，可以配置对应的module规则，比如在图片较小时直接返回base64编码，而图片较大时返回编译后的url。
+
+public目录下的资源会stay original，不会经过编译，而只是简单的复制。所以public目录下的资源在使用时必须使用绝对路径
+
+参考：https://juejin.cn/post/7159921545144434718#heading-0
+
+#### 何为base64
+
+非常简单，即使用64进制（A-Z a-z 0-9）来表示一串二进制流。2的6方为64，所以1个base64的标识符可以表示6位，为了对齐，我们需要8的倍数，那么就使用24位，即4个base64的标识符来表示24bit的数据量
+
+其实就和用16进制一样，我们用两个16进制的数字表示8bit的数据量，只不过是同样的二进制流使用了不同的表述方式。
+
+### Vite的异同
+
+vite使用import的方式
+
+```js
+import imgUrl from './asset/a.png'
+```
+
+其规则和webpack中require时大同小异，比如自动转换静态资源（图片，媒体，字体等）的url，根据资源大小决定内联base64还是使用外部url等；public目录下的资源也是简单的复制，不过访问方式推荐直接使用 / 根目录访问
+
+对于根目录 / 的思考：当项目部署在生产环境后，我们引用一个资源是下面的形式：
+
+```html
+<img src='/icon.png'/>
+```
+
+要知道资源是放在服务器上的，所以此时会发起http请求去访问该资源，而此时的root就和nginx中的root配置匹配上了，我们通过/就等于访问了该root下最外层的资源，而不用在加盘符什么的，这些在nginx中已经配置好了
+
+详情参考vite 静态资源处理
+
+关于vite cdn引入库与静态资源cdn切换的思考：
+
+https://ainyi.com/119
+
+https://juejin.cn/post/6844903904719667208 有点难搞
+
+图片vbind的解决方法：https://blog.csdn.net/chunxiaqiudong5/article/details/126072442
+
 ## Nginx部署
 
 1，当vue-router的历史模式在没有使用hash模式时，对于单页面应用，对应路径的html文件实际是不存在的，此时需要使用try_files来进行适配，它其实是一种”失败处理“的策略，在找不到对应文件时统一使用目标文件。注意try_files的格式要正确，空格也会影响配置结果（好像是，因为我多打了一些空格该配置完全就不生效）。而hash模式实际上并没有将url发送到服务器，所以服务器不用做其他配置
