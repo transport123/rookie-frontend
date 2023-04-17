@@ -387,7 +387,7 @@ https://ainyi.com/119
 
 https://juejin.cn/post/6844903904719667208 有点难搞
 
-图片vbind的解决方法：https://blog.csdn.net/chunxiaqiudong5/article/details/126072442
+图片vbind的解决方法：https://blog.csdn.net/chunxiaqiudong5/article/details/126072442   
 
 ## Nginx部署
 
@@ -398,3 +398,24 @@ https://juejin.cn/post/6844903904719667208 有点难搞
 3，nginx提供了alias来设置路径别名，即location完全替换alias的完整路径。
 
 4，在生产环境中，当访问路径不是根目录/时，打包时对应的配置也需要发生改变。vite的base也要设置为对应的子路径或完整的url目录。但此时有一个nginx的bug，alias在配合try_files无法正常工作，只能切换为root进行配置
+
+### nginx反向代理与负载均衡
+
+何为反向代理
+
+重定向与反向代理的区别
+
+反向代理为什么提高了吞吐量(nginx本身性能较高，且对于请求的处理非常优秀，但是对于单服务器而言这并没有太大意义)
+
+从登录页面重定向带来的思考，由于前后端的分离，路由的拦截是发生在前端
+
+NGINX通过lua脚本或者njs等插件虽然也能实现对于url进行判断在重定向对应的页面的功能，但是这种思路有点反人类
+
+### Session，Cookie，Token
+
+这几个东西到底是怎么定义的
+
+存储在哪里的（本地存储的几种方式,localstorage/session storage等）
+
+在功能模块中扮演了什么角色
+
