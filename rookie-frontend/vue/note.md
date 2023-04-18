@@ -770,6 +770,45 @@ line-height的设置仅为可能的行高最小值，并不代表最终的行高
 由于默认对齐方式为baseline，当未设置middle时，行高=最大元素高度+baseline高度，所以图片下部分总有一段空白，设置为middle或者bottom即可解决该问题-->
 ```
 
+### line-height与base line更新
+
+问题描述：当在button中放入一个span，一个img时，如果单独对span设置vertical-align:middle并不会垂直居中，代码和现象如下：
+
+```html
+<button>
+	<span style="border: 1px solid red; vertical-align:middle" >clickme</span>
+	<img style="width: 50px;height: 40px;background-color: aquamarine;"/> 
+</button>
+```
+
+![](./vertical-middle/vertical-middle-bug.bmp)
+
+问题本质：line-height的值与base-line的位置决定了该行内部元素的排版位置。
+
+vertical-align的描述：值为middle时，子元素的中部与父元素的baseline+x-height/2对齐。其中x-height是父元素的字体字号大小下，字母x的高度。可以看出，base-line的位置成为了该问题最核心的一点。
+
+line-height的计算并不复杂，**为行内元素顶部最高点到行内元素底部最低点的距离** 看个例子就很清晰
+
+```html
+ <button style="padding: 0;">
+        <span style="border: 1px solid red; vertical-align:middle" >clickme</span>
+        <img style="width: 50px;height: 40px;background-color: aquamarine;vertical-align: baseline;"/> 
+        <img style="width: 50px;height: 40px;background-color: aquamarine;vertical-align: middle;"/> 
+</button>
+```
+
+![](./vertical-middle/line-height-calculate.bmp)
+
+可以看到在设置了vertical-align后，各子元素的垂直位置都是围绕baseline展开，在排布完之后才决定了该行的line-height。
+
+结论：我似乎弄错了因果关系，对于父元素的一行来说，在没有子元素时，本身没有高度，baseline其实并没有所谓的位置，或者说baseline并不是在计算出line-height之后再决定它的位置，而是baseline最初就存在，子元素根据自身的vertical-align来与baseline或者
+
+top/bottom进行对齐，在这些排版结束后得到真正的行高。**以上仅为从现象推测，无法保证其正确性**
+
+参考链接：https://www.zhangxinxu.com/wordpress/2015/08/css-deep-understand-vertical-align-and-line-height/
+
+tips：button元素不像span，其行本身默认是垂直居中于button整个元素的，所以设置一个button为100px，其中的文字默认就在中间，这不是因为button的行高为100px，而是文字所处的行是居中的，请弄清两者的不同。
+
 ### 具名插槽
 
 当自定义组件中存在多个插槽时，可以通过name为插槽进行标识，在父组件中使用时，需要配合template标签带上对应的name，而最外层的所有元素会被不带name的slot插槽吸收。v-slot的简写为#
