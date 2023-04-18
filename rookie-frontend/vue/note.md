@@ -809,6 +809,45 @@ top/bottom进行对齐，在这些排版结束后得到真正的行高。**以�
 
 tips：button元素不像span，其行本身默认是垂直居中于button整个元素的，所以设置一个button为100px，其中的文字默认就在中间，这不是因为button的行高为100px，而是文字所处的行是居中的，请弄清两者的不同。
 
+当手动设置line-height时，父元素的baseline 高度总是为line-height的一半，子元素通过自身的baseline与该baseline对齐来“撑开”该行，最终的行高由撑开的高度决定；而未设置line-height时，则直接进行对齐“撑开”，因为父元素baseline的高度为0
+
+**重要：一个inline-block元素，如果里面没有inline内联元素，或者overflow不是visible，则该元素的基线就是其margin底边缘，否则，其基线就是元素里面最后一行内联元素的基线。**
+
+根据上述规则就能更好理解为什么不设置img的对齐属性时，文字的对齐属性失效的现象。img的baseline为它的边框底部，span的baseline为字母x的底部，而父元素没有行高，仅仅是一条线（baseline也在这条线上），最终的行高由这两个元素对齐后撑开整个父元素得到。
+
+再看下面这个例子：
+
+```html
+<span style="display: inline-block;line-height: 80px;background-color: red;border: 1px solid black;">
+            a
+<span style="width: 50px;height: 200px;display: inline-block;background-color: beige;"></span>
+</span>
+```
+
+![](./vertical-middle/father-line-height-default.bmp)
+
+下部分为line-height的一半，子元素和baseline对齐，符合规则；
+
+```html
+<span style="width: 50px;height: 200px;display: inline-block;background-color: beige;vertical-align: middle;"></span>
+```
+
+当给子span的vertical-align赋为middle时，渲染结果如下
+
+![](./vertical-middle/father-line-height-overflow.bmp)
+
+我一开始会觉得有些不对，因为下半部分并没有预留出line-height的一半，且此时的baseline又跑到整个line-box的中间去了。但仔细想会发现，当子元素的高度已经超过lineheight时，如果要按照baseline垂直居中对齐，不可能同时满足子元素中部与baseline对齐，且baseline的下部分高度为父line-height的一半。所以此时调整为baseline的高度为真实line-box高度的一半，位置也为line-box的中心。
+
+**总结：baseline并不是固定不变的位置，最优先的原则是元素的对齐方式，只有在所有元素根据基线排版完成后，才真正的去调整父元素的高度，baseline的高度也随之可能发生变化**
+
+**最终总结：在排版这个操作上，父元素的baseline其实是个虚的东西，子元素仅仅需要一条基准线来进行对齐排列；所以没有设置line-height时，行为很好理解，父元素被最终的line-box撑开，而此时排列已经完成；如果设置了line-height，此时特别注意包含文字的元素，fontsize无论多大，都不会影响最终的行高，且文字区域的中心位置与父元素中线对齐。注意文字区域的中心位置并不是字母X的中心点，因为文字区域上下都还有一部分不对称的空间。**
+
+这一部分的“规则”实在太多了，弄的人头昏脑胀，非要总结一条真理：子元素要不是沿着基线对齐排列，要不是与父元素的头/底对齐；当最终确定完line-box的高度后，再把这些line boxes放进去，至于此时的base-line定位在哪里，并非固定，而是要看具体情况（是否有line-height，行高最终计算是否超过line-height，**文字区域是否能满足居中条件**，元素的vertical-align到底如何设置），千万不可认定一种情况的baseline排布就认为所有情况都适合，这个规则非常的“弹性”
+
+
+
+推荐书籍：css权威指南（权威），css世界（废话较多）
+
 ### 具名插槽
 
 当自定义组件中存在多个插槽时，可以通过name为插槽进行标识，在父组件中使用时，需要配合template标签带上对应的name，而最外层的所有元素会被不带name的slot插槽吸收。v-slot的简写为#
