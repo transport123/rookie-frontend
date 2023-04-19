@@ -844,8 +844,6 @@ tips：button元素不像span，其行本身默认是垂直居中于button整个
 
 这一部分的“规则”实在太多了，弄的人头昏脑胀，非要总结一条真理：子元素要不是沿着基线对齐排列，要不是与父元素的头/底对齐；当最终确定完line-box的高度后，再把这些line boxes放进去，至于此时的base-line定位在哪里，并非固定，而是要看具体情况（是否有line-height，行高最终计算是否超过line-height，**文字区域是否能满足居中条件**，元素的vertical-align到底如何设置），千万不可认定一种情况的baseline排布就认为所有情况都适合，这个规则非常的“弹性”
 
-
-
 推荐书籍：css权威指南（权威），css世界（废话较多）
 
 ### 具名插槽
@@ -859,6 +857,89 @@ tips：button元素不像span，其行本身默认是垂直居中于button整个
 首先要在子组件插槽中定义插槽prop；使用时则在父组件中，使用对象使用或者解构使用，但是注意prop的名称一定要相同
 
 当向具名插槽传递prop时，需要使用具名name传递，稍微有些奇怪
+
+## 异步组件
+
+### 对import() require()的进一步思考
+
+import,require到底给我们提供了什么？
+
+require是为了解决JS模块化的问题出现的，通过闭包函数的方式将一个模块中的一些属性，方法导出到一个对象上，由于引用的存在，闭包中的对象并不会销毁，这部分导出的属性在外部可以正常工作，且我们无法在外部直接访问到闭包中未导出的部分。
+
+import也是类似，细节虽有不同，但是这两者的输出本质就是一个包含了一些属性与方法的对象，即module.exports，一个模块提供给外部可访问的‘接口’
+
+import的发生时机是在编译期，相当于内联了外部脚本，并导出了对应的exports对象（实现细节不得而知），且按需导入时模块内外保持了一个‘连接’，值的变化始终保持同步；但是全量导入时，只有对象类型的属性可以保持同步。并不是网上说的import就是引用！
+
+```js
+//a.js
+let a =10
+let obj={name:"tom"}
+setTimeout(()=>{
+    a=100
+    obj.name="jack"
+},5000)
+
+export default{a,obj}
+export {a,obj}//注意这两种导出方式也是有区别的
+
+//main.js
+import {a,obj} from './a.js'//此种导入方式a的值始终和a.js中的a保持一致
+import all from './a.js'//此种导入方式all.a并不会随内部a一起变化
+
+//console在settimeout的情况下打印会有一些显式bug，不过实际情况是符合该结论的
+```
+
+tips：import编译期间的内联我觉得应该也是一种按需的内联，或者就是全部将外部js内联进来；唯独不同意是只内联目标方法或属性，假如我们import了A方法，但是A的内部又调用了模块的B方法，那不就运行不了了吗，所以此时B一定是通过某种方式内联进外部模块，或者说直接将B的内容插入A方法，这样确实是只引入了A方法；不过对于变量似乎无法这样做，我能想到的就只有将变量提升到外部模块，且用‘隐藏’的别名让他对用户不可见，否则函数闭包内的变量是无法保持一直存在的。
+
+require是发生在运行时期，其实际会加载一个模块的所有内容，并最终将需要导出的内容通过module.exports浅拷贝传递出来，所以性能会较差，且浅拷贝会使得值类型的属性不会跟随模块内部发生改变。（疑问：require既然是运行时加载，是不是代表要去read一个js模块文件再生成对应的函数？很多实现require的方式确实是这样，下面放一个例子）
+
+```js
+//这里的require是文件系统的库，因为我们只关注模拟require的部分
+let path = require("path");
+let fs = require("fs");
+(function() {
+  let registered = {};
+  let cwd = process.cwd();
+  require = function require(sourceFile, prefixPath = cwd) {
+    let filePath = path.resolve(cwd, sourceFile);
+    if (registered[filePath] != null) {
+      return registered[filePath].exports;
+    }
+    let mod = {};
+    let exports = {};
+    mod.exports = exports;
+    registered[filePath] = mod;
+    let fn = new Function(
+      "require",
+      "exports",
+      "module",
+      fs.readFileSync(filePath)//该参数即为function body
+        //注意此处就readFile并创建了一个function(require,exports,module){
+       	//module.js
+        //exports.a=...
+        //}
+    );
+    let _req = s => {
+      return require(s, path.dirname(filePath));
+    };
+    fn(_req, exports, mod);
+    return mod.exports;
+  };
+  return require("main.js");
+})();
+```
+
+require是同步加载，相对应的import()函数为异步加载，返回一个返回promise对象的函数，在需要加载模块时才真正的执行并resolve；其加载过程和require很相似。
+
+### import，require对静态资源的处理
+
+当参数为图片等静态媒体资源时，通过这两个函数将这些资源视为模块，使得webpack/rollup等打包工具，在打包过程中对这些模块做对应的特殊处理，需要理解这个过程是在打包过程中发生，即打完包后这些资源url已经成功的进行了替换。
+
+参考：https://ciaozz.github.io/2020/03/24/import/
+
+### public目录小细节
+
+正确使用public中的资源方式是直接使用 /，而不要用相对路径，绝对路径。否则该资源会因为被路径引用而多余的编译到asset中，public中的资源就失去了意义，造成冗余。在vite打包过程中，只有使用 / 的资源不会被自动识别为需要编译的资源，和webpack打包过程中默认将src等属性值加上require并视为模块一样。
 
 ## vue ref和element plus节点
 
