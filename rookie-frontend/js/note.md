@@ -988,3 +988,84 @@ console.log('get'+getx())//2
 ```
 
 out函数返回了nest,getx等函数，当在out域外调用这些函数时，x的值依然像在out域内访问一样同步更新，而并不是我想的x此时会变为一个undefined。这或许是JS的特性，x的地址通过外部函数引用链nest--->x始终存在，所以x并没有被销毁。暂时先记住这种特性
+
+### 闭包update
+
+**JS的函数本身与创建该函数的作用域环境共同形成了一个闭包，当持有某个函数的引用时，其实持有的是整个闭包的引用，所以我们仍然可以像在定义函数的作用域中访问闭包中的变量，方法，且这些状态始终都不会丢失。**
+
+```js
+
+function factory(x)
+{
+    return function (y)
+    {
+        return x+y
+    }
+}
+
+let add5=factory(5)
+let add10=factory(10)
+
+add5(1)//-->5+1
+add10(10)//-->10+1
+//请注意，尽管add5与add10是被同一个函数体factory所创建，但是函数调用过程其实是不同的作用域，所以add5和add10的闭包环境是相互独立的，你可以像下面这样理解
+
+//匿名工厂
+let add5=(function (x){
+    return function(y)
+    {
+        return x+y
+    }
+})(5)
+//可以较直观的看出函数创建的作用域是独立的，不共享
+
+//而下面的函数由于在同一个作用域中被创建，所以其闭包环境是共享的
+let functions=[]
+function loopCreate()
+{
+    let arr=["one","two","three"]
+	for(let i =0;i<arr.length;i++)
+        {
+            var vitem= arr[i]
+            let litem= arr[i]
+            functions.push(function()
+            {
+             	console.log(vitem)
+                console.log(litem)
+            })
+        }
+	    
+}
+functions.forEach(print=>print())
+//打印结果中,vitem始终为three，litem为one，two，three
+//因为var存在变量提升的特性，vitem相当于定义在loopCreate的顶级作用域中，那么对于每一个创建的函数的闭包而言，其都是同一个变量
+//而litem是定义在for作用域中，每个函数的闭包都有独立的litem，因为每次进入for循环中就相当于一个新的“子闭包”
+```
+
+闭包对于性能的影响还是比较大的，因为其背后保存了整个作用域上下文环境，内存开销是一方面，且闭包的处理速度也较慢（背后原理不太清楚，和纯函数的调用明显是有区别的），所以当我们不需要利用闭包的特性时，尽量不要在函数中返回函数/将内部函数通过引用传递到函数外部。
+
+从这个角度也能解释为什么函数最好定义在原型中，而不是直接定义在构造里
+
+```js
+function MyConstructor()
+{
+    this.name='default'
+    this.getName=function(){
+        return this.name
+    }//注意当我们通过new MyConstructor创建对象时，就等于将this.getName传递到了函数外部，形成了一个函数闭包
+    //但我们完全可以避免这种做法
+}
+
+MyConstructor.prototype.getName=function(){
+    return this.name
+}//这种方式相当于直接在一个对象中定义一个函数，而不是在一个函数中定义函数并传递出去
+
+//近似于
+MyConstructor.prototype={
+    getName:function()
+    {
+        return this.name
+    }
+}
+```
+

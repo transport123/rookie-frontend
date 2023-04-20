@@ -937,6 +937,8 @@ require是同步加载，相对应的import()函数为异步加载，返回一�
 
 参考：https://ciaozz.github.io/2020/03/24/import/
 
+关于模块：https://zh.javascript.info/modules-intro 讲的非常系统详细，看来还是要读‘书’才能比较详实的掌握这些原理知识
+
 ### public目录小细节
 
 正确使用public中的资源方式是直接使用 /，而不要用相对路径，绝对路径。否则该资源会因为被路径引用而多余的编译到asset中，public中的资源就失去了意义，造成冗余。在vite打包过程中，只有使用 / 的资源不会被自动识别为需要编译的资源，和webpack打包过程中默认将src等属性值加上require并视为模块一样。
