@@ -5,10 +5,32 @@
 <title>
 title
 </title>
+<!--module类型的多次引入只会执行一次，无论是script module的方式，还是内部多次import的方式-->
 <script type="module" src="./function.js">
   
 </script>
+
+<script type="module" src="./function.js">
+  
+</script>
+
+<!--但是由于module有自己的作用域，所以不同module中的多次import同一模块是会重复执行的-->
+<script type="module" src="./functionB.js">
+  
+</script>
+
+<script src="./nonmodule.js" type="module"></script>
+<script src="./nonmodule.js" type="module"></script>
+
+<script src="./reverseA.js" type="module">
+
+</script>
+
 </head>
 <body>
+    1，import最初只支持静态，这说明当模块源文件返回后并不是直接执行，浏览器对其进行了‘编译’，输出一份内联了其中导入模块的优化js流
+    该js流为真正执行的js脚本（这只是个人的推测，因为完全查不到静态import是怎么被支持的，如果它按照类似require的方式实现，那这本身
+    就成了运行时的动态支持，前后就矛盾了，因为为了对标require的动态按需加载，之后才支持import()）
+
 </body>
 </html>
