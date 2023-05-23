@@ -1,3 +1,4 @@
+console.log("a loaded")
 let a =10
 let obj={name:"tom"}
 setTimeout(()=>{

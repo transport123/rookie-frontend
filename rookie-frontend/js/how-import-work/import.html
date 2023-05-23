@@ -10,17 +10,18 @@ title
   
 </script>
 
-<script type="module" src="./function.js">
-  
-</script>
+
+<script src="./nonmodule.js"></script>
 
 <!--但是由于module有自己的作用域，所以不同module中的多次import同一模块是会重复执行的-->
 <script type="module" src="./functionB.js">
   
 </script>
+<script src="./nomodule2.js"></script>
+
 
 <script src="./nonmodule.js" type="module"></script>
-<script src="./nonmodule.js" type="module"></script>
+
 
 <script src="./reverseA.js" type="module">
 
@@ -32,5 +33,8 @@ title
     该js流为真正执行的js脚本（这只是个人的推测，因为完全查不到静态import是怎么被支持的，如果它按照类似require的方式实现，那这本身
     就成了运行时的动态支持，前后就矛盾了，因为为了对标require的动态按需加载，之后才支持import()）
 
+    <span id="tail"></span>
+
+    <script type="module" src="./functionC.js"></script>
 </body>
 </html>

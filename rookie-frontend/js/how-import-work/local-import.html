@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html languages="zh">
+<head>
+<meta charset="utf-8">
+<title>
+title
+</title>
+
+<!-- <script type="module">
+  import {getA} from './a.js'
+  console.log("module script")
+  console.log(getA())
+  console.log(document.getElementById("tail"))
+</script>
+
+<script type="module">
+import {func} from './function.js'
+import funcb from './functionB.js'
+
+</script> -->
+
+<!-- <script>
+    console.log("not module script2")
+  console.log(document.getElementById("tail"))
+
+</script> -->
+
+<script type="module" src="function.js">
+
+</script>
+<script type="module" src="functionB.js">
+
+</script>
+
+</head>
+<body>
+    <span id="tail"></span>
+</body>
+</html>
